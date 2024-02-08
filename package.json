@@ -1,0 +1,22 @@
+{
+  "name": "cm4025-enterprise-web-dev-coursework",
+  "version": "1.0.0",
+  "description": "Coursework for CM4025, written by Ivaylo Kolev 2005549",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/IvayloKolev/CM4025-Enterprise-Web-Dev-Coursework.git"
+  },
+  "author": "Ivaylo Kolev 2005549",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/IvayloKolev/CM4025-Enterprise-Web-Dev-Coursework/issues"
+  },
+  "homepage": "https://github.com/IvayloKolev/CM4025-Enterprise-Web-Dev-Coursework#readme",
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}
