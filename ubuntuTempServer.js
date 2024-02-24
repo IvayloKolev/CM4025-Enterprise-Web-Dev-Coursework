@@ -26,8 +26,11 @@ async function run() {
     // Connect the client to the server (optional starting in v4.7)
     await client.connect();
 
-    // Establish and verify connection
-    await client.db("admin").command({ ping: 1 });
+    // Establish and verify connectionconst
+    adminDb = client.db("admin");
+    if (adminDb) {
+      await adminDb.command({ ping: 1 });
+    }
     console.log("Connected successfully to server");
     console.log("Start the database stuff");
 
