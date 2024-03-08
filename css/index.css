@@ -20,6 +20,11 @@ body {
   flex-direction: column;
 }
 
+header,
+footer {
+  flex-shrink: 0;
+}
+
 header {
   background-color: #04010a;
   color: #daa520;
@@ -44,7 +49,8 @@ main {
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: center;
+  align-items: center;
 }
 
 h1,
@@ -83,4 +89,4 @@ footer {
 .signup-button:hover,
 .login-button:hover {
   background-color: #ffd700;
-} 
+}
