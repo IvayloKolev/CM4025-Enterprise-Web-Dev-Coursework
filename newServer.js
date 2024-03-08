@@ -1,10 +1,11 @@
 const express = require("express");
 const path = require("path");
+const { MongoClient } = require("mongodb");
+
 const app = express();
 const port = 8080;
-
-const { MongoClient } = require("mongodb");
 const uri = "mongodb://127.0.0.1:27017";
+const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
 
 app.use(express.static(path.join(__dirname)));
 
@@ -22,17 +23,19 @@ app.listen(port, "0.0.0.0", () => {
 // Mongo Client
 async function run() {
   try {
-    // Connect the client to the server (optional starting in v4.7)
+    // Connect the client to the server
     await client.connect();
     // Establish and verify connection
     await client.db("admin").command({ ping: 1 });
     console.log("Connected successfully to server");
     console.log("Start the database stuff");
-    //Write databse Insert/Update/Query code here..
+    // Write database Insert/Update/Query code here...
     console.log("End the database stuff");
   } finally {
     // Ensures that the client will close when you finish/error
     await client.close();
   }
 }
+
 run().catch(console.dir);
+
