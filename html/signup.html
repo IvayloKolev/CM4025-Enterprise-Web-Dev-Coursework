@@ -1,55 +1,50 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>IRS - Sign Up</title>
-    <link rel="stylesheet" href="/css/signup.css" />
-  </head>
 
-  <body>
-    <header>
-      <h1>IRS - The International Raffle Station</h1>
-      <p>Your Gateway to Celestial Rewards</p>
-    </header>
-    <main>
-      <h2>Sign Up Now</h2>
-      <p>
-        Don't miss out on the cosmic excitement! Create an account to access
-        exclusive features and participate in multiple stellar raffles.
-      </p>
-      <form>
-        <label for="email">Email:</label>
-        <input type="email" id="email" name="email" required />
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>IRS - Sign Up</title>
+  <link rel="stylesheet" href="/css/signup.css" />
+</head>
 
-        <label for="username">Username:</label>
-        <input type="text" id="username" name="username" required />
+<body>
+  <header>
+    <h1>IRS - The International Raffle Station</h1>
+    <p>Your Gateway to Celestial Rewards</p>
+  </header>
+  <main>
+    <h2>Sign Up Now</h2>
+    <p>
+      Don't miss out on the cosmic excitement! Create an account to access
+      exclusive features and participate in multiple stellar raffles.
+    </p>
+    <form action="/signup" method="POST">
+      <label for="email">Email:</label>
+      <input type="email" id="email" name="email" required />
 
-        <label for="password">Password:</label>
-        <input type="password" id="password" name="password" required />
+      <label for="username">Username:</label>
+      <input type="text" id="username" name="username" required />
 
-        <label for="confirm-password">Confirm Password:</label>
-        <input
-          type="password"
-          id="confirm-password"
-          name="confirm-password"
-          required
-        />
+      <label for="password">Password:</label>
+      <input type="password" id="password" name="password" required />
 
-        <button type="submit" class="signup-button">Sign Up</button>
-      </form>
-      <button
-        class="signup-button"
-        onclick="window.location.href='/html/index.html';"
-      >
-        Back to Home
-      </button>
-    </main>
+      <label for="confirm-password">Confirm Password:</label>
+      <input type="password" id="confirm-password" name="confirm-password" required />
 
-    <footer>
-      <p>
-        &copy; 2024 IRS - The International Raffle Station. All rights reserved.
-      </p>
-    </footer>
-  </body>
+      <button type="submit" class="signup-button">Sign Up</button>
+    </form>
+
+    <button class="signup-button" onclick="window.location.href='/html/index.html';">
+      Back to Home
+    </button>
+  </main>
+
+  <footer>
+    <p>
+      &copy; 2024 IRS - The International Raffle Station. All rights reserved.
+    </p>
+  </footer>
+</body>
+
 </html>
