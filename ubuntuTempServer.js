@@ -37,9 +37,9 @@ app.get("/", async (req, res) => {
   }
 });
 
-// Signup route
-app.post("/signup", async (req, res) => {
-  const { email, username, password } = req.body;
+// Login route
+app.post("/login", async (req, res) => {
+  const { email, password } = req.body;
 
   try {
     await client.connect(); // Connect to MongoDB
@@ -47,20 +47,24 @@ app.post("/signup", async (req, res) => {
     const db = client.db(); // Get the default database
     const collection = db.collection("users");
 
-    // Perform additional validation if needed
+    // Check if a user with the given email exists
+    const user = await collection.findOne({ email });
 
-    // Insert user data into the collection
-    const result = await collection.insertOne({
-      email,
-      username,
-      password,
-    });
-
-    console.log(`User inserted with _id: ${result.insertedId}`);
-
-    res.redirect("/html/index.html"); // Redirect to home page after successful signup
+    if (user) {
+      // User found, check if the password is correct
+      if (user.password === password) {
+        console.log("Login successful!");
+        res.redirect("/html/index.html"); // Redirect to home page after successful login
+      } else {
+        console.log("Incorrect password");
+        res.status(401).send("Incorrect password");
+      }
+    } else {
+      console.log("User not found");
+      res.status(404).send("User not found");
+    }
   } catch (error) {
-    console.error("Error processing signup:", error);
+    console.error("Error processing login:", error);
     res.status(500).send("Internal Server Error");
   } finally {
     // Close the MongoDB connection when done
