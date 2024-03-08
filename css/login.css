@@ -57,7 +57,7 @@ footer {
   margin-top: auto;
 }
 
-.signup-button {
+.login-button {
   display: inline-block;
   background-color: #daa520;
   color: #04010a;
@@ -68,7 +68,7 @@ footer {
   margin-top: 20px;
 }
 
-.signup-button:hover {
+.login-button:hover {
   background-color: #ffd700;
 }
 
