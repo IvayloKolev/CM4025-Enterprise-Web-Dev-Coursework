@@ -57,6 +57,7 @@ footer {
   margin-top: auto;
 }
 
+.login-button,
 .signup-button {
   font-family: Arial, sans-serif;
   display: inline-block;
@@ -65,12 +66,13 @@ footer {
   padding: 0.5em 1em;
   text-decoration: none;
   border-radius: 5px;
-  transition: background-color 0.3s;
+  transition: background-color 0.1s;
   margin-top: 20px;
   cursor: pointer;
   border: none;
 }
 
+.login-button:hover,
 .signup-button:hover {
   background-color: #ffd700;
 }

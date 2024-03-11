@@ -37,6 +37,35 @@ app.get("/", async (req, res) => {
   }
 });
 
+// Signup route
+app.post("/signup", async (req, res) => {
+  const { email, username, password } = req.body;
+
+  try {
+    await client.connect(); // Connect to MongoDB
+
+    const db = client.db(); // Get the default database
+    const collection = db.collection("users");
+
+    // Insert user data into the collection
+    const result = await collection.insertOne({
+      email,
+      username,
+      password,
+    });
+
+    console.log(`User inserted with _id: ${result.insertedId}`);
+
+    res.redirect("/html/index.html"); // Redirect to home page after successful signup
+  } catch (error) {
+    console.error("Error processing signup:", error);
+    res.status(500).send("Internal Server Error");
+  } finally {
+    // Close the MongoDB connection when done
+    await client.close();
+  }
+});
+
 // Login route
 app.post("/login", async (req, res) => {
   const { email, password } = req.body;
