@@ -2,6 +2,7 @@ const express = require("express");
 const path = require("path");
 const { MongoClient } = require("mongodb");
 const bodyParser = require("body-parser");
+const {v4: uuidv4} = require("uuid");
 
 const app = express();
 const port = 8080;
@@ -47,14 +48,18 @@ app.post("/signup", async (req, res) => {
     const db = client.db(); // Get the default database
     const collection = db.collection("users");
 
+    // Generate user id
+    const userId = uuidv4();
+
     // Insert user data into the collection
     const result = await collection.insertOne({
+      _id: userId,
       email,
       username,
       password,
     });
 
-    console.log(`User inserted with _id: ${result.insertedId}`);
+    console.log(`User inserted with _id: ${userId}`);
 
     res.redirect("/html/index.html"); // Redirect to home page after successful signup
   } catch (error) {
