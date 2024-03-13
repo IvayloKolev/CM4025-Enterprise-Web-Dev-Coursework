@@ -4,12 +4,26 @@ const { MongoClient } = require("mongodb");
 const bodyParser = require("body-parser");
 const { v4: uuidv4 } = require("uuid");
 const bcrypt = require("bcrypt");
+const session = require('express-session');
+const MongoStore = require('connect-mongo')(session);
 
 const app = express();
 const port = 8080;
 
 app.use(express.static(path.join(__dirname)));
 app.use(bodyParser.urlencoded({ extended: true }));
+
+app.use(
+  session({
+    secret: 'TODO',
+    resave: false,
+    saveUninitialized: false,
+    store: new MongoStore({ url: uri }),
+    cookie: {
+      maxAge: 1000 * 60 * 60 * 24, // 24h
+    },
+  })
+)
 
 // MongoDB Connection
 const uri = "mongodb://127.0.0.1:27017";
@@ -125,6 +139,13 @@ app.post("/login", async (req, res) => {
 
     // Password is correct
     console.log("Login successful!");
+    console.log("Creating login session");
+    req.session.user = {
+      _id: user._id,
+      email: user.email,
+      username: user.username,
+    };
+
     res.redirect("/html/index.html");
 
   } catch (error) {
@@ -138,6 +159,15 @@ app.post("/login", async (req, res) => {
   }
 });
 
+// Logout route
+app.get('/logout', (req, res) => {
+  req.session.destroy((err) => {
+    if (err) {
+      console.error('Error destroying session:', err);
+    }
+    res.redirect('/html/index.html'); // Redirect to the login page after logout
+  });
+});
 
 // Start the server
 app.listen(port, "0.0.0.0", () => {
