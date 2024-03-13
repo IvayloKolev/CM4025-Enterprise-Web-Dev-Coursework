@@ -10,7 +10,10 @@ const MongoStore = require('connect-mongo');
 const app = express();
 const port = 8080;
 
+// Serve static files from the 'public' directory
 app.use(express.static(path.join(__dirname)));
+
+// Use body-parser middleware
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // MongoDB Connection
@@ -20,10 +23,11 @@ const client = new MongoClient(uri, {
   useUnifiedTopology: true,
 });
 
+// Configure session management
 const mongoStoreInstance = new MongoStore({
-  mongoUrl: uri, 
+  mongoUrl: uri,
   collectionName: 'sessions',
-  ttl: 60 * 60 * 24,
+  ttl: 60 * 60 * 24, // 24h
 });
 
 app.use(
@@ -146,6 +150,7 @@ app.post("/login", async (req, res) => {
     // Password is correct
     console.log("Login successful!");
     console.log("Creating login session");
+
     req.session.user = {
       _id: user._id,
       email: user.email,
@@ -174,6 +179,20 @@ app.get('/logout', (req, res) => {
     res.redirect('/html/index.html'); // Redirect to the login page after logout
   });
 });
+
+// Profile route
+app.get("/profile", (req, res) => {
+  // Check if the user is logged in
+  if (req.session.user) {
+    // Send user information as JSON
+    res.json({ user: req.session.user });
+  } else {
+    // If not logged in, redirect to the login page
+    console.log("No logged in user");
+    res.redirect('/html/login.html');
+  }
+});
+
 
 // Start the server
 app.listen(port, "0.0.0.0", () => {

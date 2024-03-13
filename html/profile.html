@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>User Profile</title>
+    <link rel="stylesheet" href="/css/general.css" />
+    <link rel="stylesheet" href="/css/profile.css" />
+</head>
+
+<body>
+    <header>
+        <h1>User Profile</h1>
+    </header>
+
+    <main>
+        <section id="user-info">
+            <h2>Welcome, <span id="username"></span>!</h2>
+            <p>Email: <span id="email"></span></p>
+        </section>
+
+        <section id="logout-section">
+            <button class="action-button">Logout</button>
+            <button class="action-button" onclick="window.location.href='/html/index.html';">
+                Back to Home
+            </button>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 IRS - The International Raffle Station. All rights reserved.</p>
+    </footer>
+
+    <script src="/script/profile.js"></script>
+</body>
+
+</html>
