@@ -5,7 +5,7 @@ const bodyParser = require("body-parser");
 const { v4: uuidv4 } = require("uuid");
 const bcrypt = require("bcrypt");
 const session = require('express-session');
-const MongoStore = require('connect-mongo')(session);
+const MongoStore = require('connect-mongo');
 
 const app = express();
 const port = 8080;
@@ -13,24 +13,30 @@ const port = 8080;
 app.use(express.static(path.join(__dirname)));
 app.use(bodyParser.urlencoded({ extended: true }));
 
-app.use(
-  session({
-    secret: 'TODO',
-    resave: false,
-    saveUninitialized: false,
-    store: new MongoStore({ url: uri }),
-    cookie: {
-      maxAge: 1000 * 60 * 60 * 24, // 24h
-    },
-  })
-)
-
 // MongoDB Connection
 const uri = "mongodb://127.0.0.1:27017";
 const client = new MongoClient(uri, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
+
+const mongoStoreInstance = new MongoStore({
+  mongoUrl: uri, 
+  collectionName: 'sessions',
+  ttl: 60 * 60 * 24,
+});
+
+app.use(
+  session({
+    secret: 'TODO',
+    resave: false,
+    saveUninitialized: false,
+    store: mongoStoreInstance,
+    cookie: {
+      maxAge: 1000 * 60 * 60 * 24, // 24h
+    },
+  })
+);
 
 // Serve the index.html file
 app.get("/", async (req, res) => {
