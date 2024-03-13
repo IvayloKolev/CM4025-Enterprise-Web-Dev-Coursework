@@ -176,6 +176,7 @@ app.get('/logout', (req, res) => {
     if (err) {
       console.error('Error destroying session:', err);
     }
+    console.log("Logged out, session destroyed successfully");
     res.redirect('/html/index.html'); // Redirect to the login page after logout
   });
 });
