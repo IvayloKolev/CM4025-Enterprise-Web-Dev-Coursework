@@ -1,6 +1,6 @@
 const cron = require('node-cron');
 
-cron.schedule('*/1 * * * *', async () => {
+cron.schedule('*/1 * * * * *', async () => {
 
     // Fetch data from the server every minute to keep up to date
     fetch('/all-raffles')
