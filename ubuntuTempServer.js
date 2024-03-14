@@ -235,6 +235,28 @@ app.post("/create-raffle", async (req, res) => {
   }
 });
 
+// All Raffles route
+app.get("/all-raffles", async (req, res) => {
+  try {
+    // Connect to MongoDB
+    await client.connect();
+    const db = client.db(); // Get the default database
+    const raffleCollection = db.collection("raffles");
+
+    // Fetch all raffles from the collection
+    const raffles = await raffleCollection.find().toArray();
+
+    // Send the list of raffles as JSON response
+    res.json(raffles);
+  } catch (error) {
+    console.error("Error fetching all raffles:", error);
+    res.status(500).send("Internal Server Error");
+  } finally {
+    // Close the MongoDB connection when done
+    await client.close();
+  }
+});
+
 // Start the server
 app.listen(port, "0.0.0.0", () => {
   console.log(`Server is running at http://192.168.17.128:${port}`);

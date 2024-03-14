@@ -22,6 +22,33 @@
         <input type="text" id="prize" name="prize" required><br><br>
         <input type="submit" value="Create Raffle">
     </form>
+
+    <h2>All Raffles</h2>
+    <ul id="raffleList"></ul>
+
+<script>
+    // Fetch all raffles and display them in the list
+    fetch('/all-raffles')
+        .then(response => response.json())
+        .then(data => {
+            const raffleList = document.getElementById('raffleList');
+            raffleList.innerHTML = ''; // Clear previous list items
+
+            data.forEach(raffle => {
+                const listItem = document.createElement('li');
+                let participants = raffle.participants.length > 0 ? raffle.participants.join(', ') : 'None';
+                listItem.innerHTML = `Name: ${raffle.name},<br>
+                    Start Date: ${raffle.startDate},<br>
+                    End Date: ${raffle.endDate},<br>
+                    Draw Date: ${raffle.drawDate},<br>
+                    Prize: ${raffle.prize},<br>
+                    Participants: ${participants}`; // Assuming participants is an array
+                raffleList.appendChild(listItem);
+            });
+        })
+        .catch(error => console.error('Error fetching raffles:', error));
+</script>
 </body>
 
 </html>
+
