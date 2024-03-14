@@ -1,11 +1,13 @@
-const express = require("express");
-const path = require("path");
-const { MongoClient } = require("mongodb");
-const bodyParser = require("body-parser");
-const { v4: uuidv4 } = require("uuid");
-const bcrypt = require("bcrypt");
+const express = require('express');
+const path = require('path');
+const { MongoClient } = require('mongodb');
+const bodyParser = require('body-parser');
+const { v4: uuidv4 } = require('uuid');
+const bcrypt = require('bcrypt');
 const session = require('express-session');
 const MongoStore = require('connect-mongo');
+const cron = require('node-cron');
+const createRaffle = require('./script/raffle.js');
 
 const app = express();
 const port = 8080;
@@ -254,6 +256,17 @@ app.get("/all-raffles", async (req, res) => {
   } finally {
     // Close the MongoDB connection when done
     await client.close();
+  }
+});
+
+// Creating Raffles
+// '*/5 * * * *' for every 5 minutes
+cron.schedule('*/5 * * * * *', async () => {
+  try {
+    await createRaffle();
+    console.log('Raffle created and pushed to db.');
+  } catch (error) {
+    console.error('Error creating raffle:', error);
   }
 });
 
