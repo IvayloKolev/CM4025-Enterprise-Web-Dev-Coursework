@@ -71,11 +71,9 @@
   </footer>
 
   <script>
-    const cron = require('node-cron');
-
-    cron.schedule('*/1 * * * * *', async () => {
+    async function fetchRafflesAndUpdateList() {
       try {
-        // Fetch data from the server every minute to keep up to date
+        // Fetch data from the server to update the list of active raffles
         const response = await fetch('/all-raffles');
         if (!response.ok) {
           throw new Error('Network response was not ok');
@@ -102,9 +100,16 @@
       } catch (error) {
         console.error('Error fetching or processing raffles:', error);
       }
-    });
+    }
+
+    // Call fetchRafflesAndUpdateList initially
+    fetchRafflesAndUpdateList();
+
+    // Schedule periodic updates every minute
+    setInterval(fetchRafflesAndUpdateList, 6000); // 60000 ms = 1 minute
   </script>
 
 </body>
 
 </html>
+
