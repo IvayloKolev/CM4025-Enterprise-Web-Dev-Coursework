@@ -1,0 +1,16 @@
+main {
+    display: flex;
+    justify-content: space-between;
+    max-width: 80vw;
+    margin: 20px auto;
+    padding: 20px;
+}
+
+#raffleList {
+    flex: 1;
+    margin-left: 20px;
+}
+
+#raffleList li {
+    margin-bottom: 10px;
+}

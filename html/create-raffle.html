@@ -4,51 +4,70 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Create Raffle</title>
+    <title>IRS - Create Raffle</title>
+    <link rel="stylesheet" href="/css/general.css">
+    <link rel="stylesheet" href="/css/raffle.css">
 </head>
 
 <body>
-    <h1>Create Raffle</h1>
-    <form action="/create-raffle" method="POST">
-        <label for="name">Name:</label><br>
-        <input type="text" id="name" name="name" required><br>
-        <label for="startDate">Start Date:</label><br>
-        <input type="datetime-local" id="startDate" name="startDate" required><br>
-        <label for="endDate">End Date:</label><br>
-        <input type="datetime-local" id="endDate" name="endDate" required><br>
-        <label for="drawDate">Draw Date:</label><br>
-        <input type="datetime-local" id="drawDate" name="drawDate" required><br>
-        <label for="prize">Prize:</label><br>
-        <input type="text" id="prize" name="prize" required><br><br>
-        <input type="submit" value="Create Raffle">
-    </form>
+    <header>
+        <h1>IRS - Create Raffle</h1>
+        <p>Your Gateway to Celestial Rewards</p>
+    </header>
 
-    <h2>All Raffles</h2>
-    <ul id="raffleList"></ul>
 
-<script>
-    // Fetch all raffles and display them in the list
-    fetch('/all-raffles')
-        .then(response => response.json())
-        .then(data => {
-            const raffleList = document.getElementById('raffleList');
-            raffleList.innerHTML = ''; // Clear previous list items
+    <main>
+        <div class="raffle-form">
+            <h2>Create Raffle</h2>
+            <form action="/create-raffle" method="POST">
+                <label for="name">Name:</label><br>
+                <input type="text" id="name" name="name" required><br>
+                <label for="startDate">Start Date:</label><br>
+                <input type="datetime-local" id="startDate" name="startDate" required><br>
+                <label for="endDate">End Date:</label><br>
+                <input type="datetime-local" id="endDate" name="endDate" required><br>
+                <label for="drawDate">Draw Date:</label><br>
+                <input type="datetime-local" id="drawDate" name="drawDate" required><br>
+                <label for="prize">Prize:</label><br>
+                <input type="text" id="prize" name="prize" required><br><br>
+                <input type="submit" value="Create Raffle">
+            </form>
+        </div>
 
-            data.forEach(raffle => {
-                const listItem = document.createElement('li');
-                let participants = raffle.participants.length > 0 ? raffle.participants.join(', ') : 'None';
-                listItem.innerHTML = `Name: ${raffle.name},<br>
+        <div id="raffleListContainer">
+            <h2>All Raffles</h2>
+            <ul id="raffleList"></ul>
+        </div>
+    </main>
+
+    <footer>
+        <p>
+            &copy; 2024 IRS - The International Raffle Station. All rights reserved.
+        </p>
+    </footer>
+
+    <script>
+        // Fetch all raffles and display them in the list
+        fetch('/all-raffles')
+            .then(response => response.json())
+            .then(data => {
+                const raffleList = document.getElementById('raffleList');
+                raffleList.innerHTML = ''; // Clear previous list items
+
+                data.forEach(raffle => {
+                    const listItem = document.createElement('li');
+                    let participants = raffle.participants.length > 0 ? raffle.participants.join(', ') : 'None';
+                    listItem.innerHTML = `Name: ${raffle.name},<br>
                     Start Date: ${raffle.startDate},<br>
                     End Date: ${raffle.endDate},<br>
                     Draw Date: ${raffle.drawDate},<br>
                     Prize: ${raffle.prize},<br>
                     Participants: ${participants}`; // Assuming participants is an array
-                raffleList.appendChild(listItem);
-            });
-        })
-        .catch(error => console.error('Error fetching raffles:', error));
-</script>
+                    raffleList.appendChild(listItem);
+                });
+            })
+            .catch(error => console.error('Error fetching raffles:', error));
+    </script>
 </body>
 
 </html>
-
