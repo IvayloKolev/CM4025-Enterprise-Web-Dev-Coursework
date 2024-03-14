@@ -20,10 +20,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 // MongoDB Connection
 const uri = "mongodb://127.0.0.1:27017";
-const client = new MongoClient(uri, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-});
+const client = new MongoClient(uri);
 
 // Configure session management
 const mongoStoreInstance = new MongoStore({
@@ -261,7 +258,7 @@ app.get("/all-raffles", async (req, res) => {
 
 // Creating Raffles
 // '*/5 * * * *' for every 5 minutes
-cron.schedule('*/5 * * * * *', async () => {
+cron.schedule('*/5 * * * *', async () => {
   try {
     await createRaffle();
     console.log('Raffle created and pushed to db.');
