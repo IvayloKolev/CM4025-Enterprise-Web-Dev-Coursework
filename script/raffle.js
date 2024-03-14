@@ -2,10 +2,7 @@ const { MongoClient } = require("mongodb");
 
 const createRaffle = async () => {
     const uri = "mongodb://127.0.0.1:27017";
-    const client = new MongoClient(uri, {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-    });
+    const client = new MongoClient(uri);
 
     try {
         // Connect to MongoDB
@@ -19,18 +16,18 @@ const createRaffle = async () => {
 
         // Generate random details for the new raffle
         const name = `Raffle ${id}`;
-        
-	const now = new Date();
-	now.setMilliseconds(0); // Clear milliseconds and round to nearest second
-	const startDate = now.toISOString().replace('T', ' ').replace(/\.\d{3}Z/, ''); // Current date and time
 
-	const end = new Date(now.getTime() + 5 * 60 * 1000);
-	end.setMilliseconds(0); // Clear milliseconds and round to nearest second
-	const endDate = end.toISOString().replace('T', ' ').replace(/\.\d{3}Z/, ''); // End date is 5 minutes from start date
+        const now = new Date();
+        now.setMilliseconds(0); // Clear milliseconds and round to nearest second
+        const startDate = now.toISOString().replace('T', ' ').replace(/\.\d{3}Z/, ''); // Current date and time
 
-	const draw = new Date(end.getTime() + 1 * 60 * 1000);
-	draw.setMilliseconds(0); // Clear milliseconds and round to nearest second
-	const drawDate = draw.toISOString().replace('T', ' ').replace(/\.\d{3}Z/, ''); // Draw date is 1 minute after end date
+        const end = new Date(now.getTime() + 5 * 60 * 1000);
+        end.setMilliseconds(0); // Clear milliseconds and round to nearest second
+        const endDate = end.toISOString().replace('T', ' ').replace(/\.\d{3}Z/, ''); // End date is 5 minutes from start date
+
+        const draw = new Date(end.getTime() + 1 * 60 * 1000);
+        draw.setMilliseconds(0); // Clear milliseconds and round to nearest second
+        const drawDate = draw.toISOString().replace('T', ' ').replace(/\.\d{3}Z/, ''); // Draw date is 1 minute after end date
 
 
         const prize = createPrizeName();
