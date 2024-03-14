@@ -1,5 +1,3 @@
-// js/profile.js
-
 document.addEventListener('DOMContentLoaded', () => {
     const usernameElement = document.getElementById('username');
     const emailElement = document.getElementById('email');

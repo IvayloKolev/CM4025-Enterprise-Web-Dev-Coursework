@@ -5,7 +5,7 @@ body {
     background: rgb(30, 18, 73);
     background: linear-gradient(45deg,
             rgba(30, 18, 73, 1) 0%,
-            rgba(4, 4, 38, 1) 10%,
+            rgb(9, 9, 96) 30%,
             rgba(0, 0, 0, 1) 100%);
     color: #daa520;
     overflow-x: hidden;

@@ -193,6 +193,46 @@ app.get("/profile", (req, res) => {
   }
 });
 
+// Create raffle route
+app.post("/create-raffle", async (req, res) => {
+  const { name, startDate, endDate, drawDate, prize } = req.body;
+
+  try {
+    // Connect to MongoDB
+    await client.connect();
+    const db = client.db(); // Get the default database
+    const collection = db.collection("raffles");
+
+    // Get the number of existing raffles to set the new raffle's ID
+    const numRaffles = await collection.countDocuments();
+    const id = numRaffles + 1;
+
+    // Create the new raffle object
+    const newRaffle = {
+      id,
+      name,
+      startDate,
+      endDate,
+      drawDate,
+      prize,
+      participants: [],
+      winner: null
+    };
+
+    // Insert the new raffle into the collection
+    await collection.insertOne(newRaffle);
+
+    console.log(`Raffle created with ID: ${id}`);
+
+    res.status(201).send(`Raffle created with ID: ${id}`);
+  } catch (error) {
+    console.error("Error creating raffle:", error);
+    res.status(500).send("Internal Server Error");
+  } finally {
+    // Close the MongoDB connection when done
+    await client.close();
+  }
+});
 
 // Start the server
 app.listen(port, "0.0.0.0", () => {

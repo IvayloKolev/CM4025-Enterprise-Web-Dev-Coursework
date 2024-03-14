@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Raffle</title>
+</head>
+
+<body>
+    <h1>Create Raffle</h1>
+    <form action="/create-raffle" method="POST">
+        <label for="name">Name:</label><br>
+        <input type="text" id="name" name="name" required><br>
+        <label for="startDate">Start Date:</label><br>
+        <input type="datetime-local" id="startDate" name="startDate" required><br>
+        <label for="endDate">End Date:</label><br>
+        <input type="datetime-local" id="endDate" name="endDate" required><br>
+        <label for="drawDate">Draw Date:</label><br>
+        <input type="datetime-local" id="drawDate" name="drawDate" required><br>
+        <label for="prize">Prize:</label><br>
+        <input type="text" id="prize" name="prize" required><br><br>
+        <input type="submit" value="Create Raffle">
+    </form>
+</body>
+
+</html>
