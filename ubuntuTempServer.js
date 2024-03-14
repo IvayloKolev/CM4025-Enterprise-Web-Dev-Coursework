@@ -8,6 +8,7 @@ const session = require('express-session');
 const MongoStore = require('connect-mongo');
 const cron = require('node-cron');
 const createRaffle = require('./script/raffle.js');
+const WebSocket = require('ws');
 
 const app = express();
 const port = 8080;
