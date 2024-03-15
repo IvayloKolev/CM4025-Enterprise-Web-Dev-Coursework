@@ -7,7 +7,7 @@ const bcrypt = require('bcrypt');
 const session = require('express-session');
 const MongoStore = require('connect-mongo');
 const cron = require('node-cron');
-const createRaffle = require('./script/raffle.js');
+const createRaffle = require('./script/raffleCreator.js');
 
 const app = express();
 const port = 8080;
@@ -255,6 +255,36 @@ app.get("/all-raffles", async (req, res) => {
     await client.close();
   }
 });
+
+// Get raffle by ID route
+app.get("/raffle/:id", async (req, res) => {
+  const raffleId = req.params.id;
+
+  try {
+    // Connect to MongoDB
+    await client.connect();
+    const db = client.db(); // Get the default database
+    const collection = db.collection("raffles");
+
+    // Find the raffle with the specified ID
+    const raffle = await collection.findOne({ id: parseInt(raffleId) });
+
+    if (raffle) {
+      // If raffle found, send it as JSON response
+      res.json(raffle);
+    } else {
+      // If raffle not found, return 404 error
+      res.status(404).json({ error: "Raffle not found" });
+    }
+  } catch (error) {
+    console.error("Error fetching raffle by ID:", error);
+    res.status(500).send("Internal Server Error");
+  } finally {
+    // Close the MongoDB connection when done
+    await client.close();
+  }
+});
+
 
 // Creating Raffles
 // '*/5 * * * *' for every 5 minutes
