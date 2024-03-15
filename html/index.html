@@ -12,6 +12,18 @@
 <body>
   <header>
     <h1>IRS - The International Raffle Station</h1>
+
+    <button id="create-raffle-btn" class="action-button">Create Raffle</button>
+
+    <div class="account-dropdown">
+      <button class="dropbtn">My Account</button>
+      <div class="dropdown-content">
+        <a href="/html/account.html" id="account-btn">View Account</a>
+        <a id="logout-btn">Log out</a>
+        <a href="/html/signup.html" id="signup-btn">Sign Up</a>
+        <a href="/html/login.html" id="login-btn">Log In</a>
+      </div>
+    </div>
   </header>
 
   <main>
@@ -44,15 +56,7 @@
           exclusive features and participate in multiple stellar raffles.
         </p>
         <button class="action-button" onclick="window.location.href='/html/signup.html';">
-          Sign Up Now!
-        </button>
-
-        <button class="action-button" onclick="window.location.href='/html/login.html';">
-          Log In
-        </button>
-
-        <button class="action-button" onclick="window.location.href='/html/profile.html';">
-          My Profile
+          Create Your Account Now!
         </button>
       </div>
 
@@ -70,6 +74,7 @@
     </p>
   </footer>
 
+  <script src="/script/accountDropdown.js"></script>
   <script src="/script/index.js"></script>
 
 </body>

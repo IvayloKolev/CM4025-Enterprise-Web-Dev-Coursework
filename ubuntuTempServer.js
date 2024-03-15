@@ -98,9 +98,13 @@ app.post("/signup", async (req, res) => {
     // 2^10 = 1024 rounds of hashing
     const hashedPassword = await bcrypt.hash(password, 10);
 
+    // Set the default user type to "user" unless specified as admin
+    const userType = userType || "user";
+
     // Insert user data into the collection
     const result = await collection.insertOne({
       _id: userId,
+      type: userType,
       email,
       username,
       password: hashedPassword,

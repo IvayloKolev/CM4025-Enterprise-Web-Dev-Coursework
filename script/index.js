@@ -59,4 +59,3 @@ fetchRafflesAndUpdateList();
 // Schedule periodic updates every thirty seconds
 // 30000 for 30 sec, testing with 1
 setInterval(fetchRafflesAndUpdateList, 1000);
-

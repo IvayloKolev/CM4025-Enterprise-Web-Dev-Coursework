@@ -31,8 +31,6 @@ const createRaffle = async () => {
         draw.setMilliseconds(0); // Clear milliseconds
         const drawDate = draw.toISOString().slice(0, -8); // Remove seconds and milliseconds
 
-
-
         const prize = createPrizeName();
 
         // Create the new raffle object
@@ -59,7 +57,6 @@ const createRaffle = async () => {
     }
 };
 
-
 // Function to generate a random prize name
 const createPrizeName = () => {
     const prizeType = ["Red Dwarf", "Yellow Star", "Red Giant", "White Dwarf", "Pulsar", "Black Hole", "Comet", "Planet", "Asteroid"];
@@ -69,4 +66,3 @@ const createPrizeName = () => {
 };
 
 module.exports = createRaffle;
-

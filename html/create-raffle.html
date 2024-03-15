@@ -11,10 +11,21 @@
 
 <body>
     <header>
-        <h1>IRS - Create Raffle</h1>
-        <p>Your Gateway to Celestial Rewards</p>
-    </header>
+        <h1>IRS - The International Raffle Station</h1>
 
+        <button id="create-raffle-btn" class="action-button">Create Raffle</button>
+    
+        <div class="account-dropdown">
+        <div class="account-dropdown">
+            <button class="dropbtn">My Account</button>
+            <div class="dropdown-content">
+                <a href="/html/account.html" id="account-btn">View Account</a>
+                <a id="logout-btn">Log out</a>
+                <a href="/html/signup.html" id="signup-btn">Sign Up</a>
+                <a href="/html/login.html" id="login-btn">Log In</a>
+            </div>
+        </div>
+    </header>
 
     <main>
         <div class="raffle-form">
@@ -45,6 +56,8 @@
             &copy; 2024 IRS - The International Raffle Station. All rights reserved.
         </p>
     </footer>
+
+    <script src="/script/accountDropdown.js"></script>
 
     <script>
         // Fetch all raffles and display them in the list
