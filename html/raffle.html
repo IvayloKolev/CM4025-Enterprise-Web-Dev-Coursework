@@ -11,20 +11,26 @@
 
 <body>
     <header>
-        <h1>[Prize] Raffle</h1>
+        <h1><span id="raffle-prize-header"></span> Raffle</h1>
     </header>
 
     <main>
         <section id="raffle-info">
-            <p>Name: [Name]</p>
-            <p>Prize: [Prize]</p>
-            <p>Entry Start Date: [Start Date]</p>
-            <p>Entry Date: [End Date]</p>
-            <p>Draw Date: [Draw Date]</p>
+            <p><strong>Name:</strong> <span id="raffle-name"></span></p>
+            <p><strong>Prize:</strong> <span id="raffle-prize"></span></p>
+            <p><strong>Entry Start Date:</strong> <span id="raffle-start-date"></span></p>
+            <p><strong>Entry End Date:</strong> <span id="raffle-end-date"></span></p>
+            <p><strong>Draw Date:</strong> <span id="raffle-draw-date"></span></p>
         </section>
 
         <section id="enter-raffle-section">
             <button id="enter-raffle-button" class="action-button">Enter Raffle</button>
+        </section>
+
+        <section id="back-button-section">
+            <button id="back-button" class="action-button" onclick="window.location.href='/html/index.html';">
+                Back to Home
+            </button>
         </section>
     </main>
 

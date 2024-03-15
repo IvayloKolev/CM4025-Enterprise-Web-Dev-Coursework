@@ -15,19 +15,22 @@ const createRaffle = async () => {
         const id = numRaffles + 1;
 
         // Generate random details for the new raffle
-        const name = `Raffle ${id}`;
 
         const now = new Date();
-        now.setMilliseconds(0); // Clear milliseconds and round to nearest second
-        const startDate = now.toISOString().replace('T', ' ').replace(/\.\d{3}Z/, ''); // Current date and time
+        now.setSeconds(0); // Clear seconds
+        now.setMilliseconds(0); // Clear milliseconds
+        const startDate = now.toISOString().slice(0, -8); // Remove seconds and milliseconds
 
         const end = new Date(now.getTime() + 5 * 60 * 1000);
-        end.setMilliseconds(0); // Clear milliseconds and round to nearest second
-        const endDate = end.toISOString().replace('T', ' ').replace(/\.\d{3}Z/, ''); // End date is 5 minutes from start date
+        end.setSeconds(0); // Clear seconds
+        end.setMilliseconds(0); // Clear milliseconds
+        const endDate = end.toISOString().slice(0, -8); // Remove seconds and milliseconds
 
         const draw = new Date(end.getTime() + 1 * 60 * 1000);
-        draw.setMilliseconds(0); // Clear milliseconds and round to nearest second
-        const drawDate = draw.toISOString().replace('T', ' ').replace(/\.\d{3}Z/, ''); // Draw date is 1 minute after end date
+        draw.setSeconds(0); // Clear seconds
+        draw.setMilliseconds(0); // Clear milliseconds
+        const drawDate = draw.toISOString().slice(0, -8); // Remove seconds and milliseconds
+
 
 
         const prize = createPrizeName();
@@ -35,7 +38,7 @@ const createRaffle = async () => {
         // Create the new raffle object
         const newRaffle = {
             id,
-            name,
+            name: `Raffle for ${prize}`,
             startDate,
             endDate,
             drawDate,
@@ -55,6 +58,7 @@ const createRaffle = async () => {
         await client.close();
     }
 };
+
 
 // Function to generate a random prize name
 const createPrizeName = () => {

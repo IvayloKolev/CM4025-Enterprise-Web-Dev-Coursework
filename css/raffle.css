@@ -1,9 +1,18 @@
 main {
     display: flex;
-    justify-content: space-between;
+    flex-direction: column;
     max-width: 80vw;
     margin: 20px auto;
     padding: 20px;
+    position: relative;
+}
+
+#raffle-info {
+    margin-bottom: 20px;
+}
+
+#enter-raffle-section {
+    margin-top: 20px;
 }
 
 #raffleList {
@@ -13,4 +22,21 @@ main {
 
 #raffleList li {
     margin-bottom: 10px;
+}
+
+#enter-raffle-section {
+    text-align: center;
+    margin-top: 20px;
+}
+
+#enter-raffle-button {
+    font-size: 1.2em;
+    padding: 10px 20px;
+}
+
+#back-button {
+    position: absolute;
+    bottom: 20px;
+    left:  50%;
+    transform: translateX(-50%);
 }

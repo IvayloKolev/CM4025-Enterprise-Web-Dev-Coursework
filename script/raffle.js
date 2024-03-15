@@ -17,8 +17,10 @@ fetch(`/raffle/${raffleId}`)
         return response.json();
     })
     .then(data => {
+    	console.log('Raffle data:', data);
         // Populate the page with the retrieved raffle information
         document.getElementById('raffle-name').innerText = data.name;
+        document.getElementById('raffle-prize-header').innerText = data.prize;
         document.getElementById('raffle-prize').innerText = data.prize;
         document.getElementById('raffle-start-date').innerText = data.startDate;
         document.getElementById('raffle-end-date').innerText = data.endDate;

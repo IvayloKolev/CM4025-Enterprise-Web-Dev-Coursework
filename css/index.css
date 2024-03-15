@@ -30,4 +30,5 @@ main {
 
 .raffle-list li:hover {
   background-color: #090960;
+  cursor: pointer;
 }
