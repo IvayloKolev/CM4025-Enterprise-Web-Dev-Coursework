@@ -16,7 +16,7 @@ main {
 .raffle-list {
   flex: 1;
   overflow-y: auto;
-  max-height: 80vh;
+  max-height: 70vh;
 }
 
 .raffle-list li {
