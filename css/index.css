@@ -10,22 +10,25 @@ main {
 
 .welcome {
   flex: 1;
+  color: #daa520;
 }
 
 .raffle-list {
   flex: 1;
   overflow-y: auto;
   max-height: 80vh;
+  padding: 20px;
 }
 
 .raffle-list li {
-  padding: 10px;
-  margin-bottom: 5px;
-  background-color: #f0f0f0;
-  border-radius: 5px;
+  padding: 15px;
+  margin-bottom: 10px;
+  background-color: #04010a;
+  border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s ease;
 }
 
 .raffle-list li:hover {
-  background-color: #e0e0e0;
+  background-color: #090960;
 }
