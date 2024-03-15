@@ -18,10 +18,10 @@ async function fetchRafflesAndUpdateList() {
             let participants = raffle.participants.length > 0 ? raffle.participants.join(', ') : 'None';
             listItem.innerHTML = `
                 <h3>${raffle.name}</h3>
-                <h3><strong>Prize:</strong> ${raffle.prize}<h3>
-                <p><strong>Start Date:</strong> ${new Date(raffle.startDate).toLocaleString()}</p>
-                <p><strong>End Date:</strong> ${new Date(raffle.endDate).toLocaleString()}</p>
-                <p><strong>Draw Date:</strong> ${new Date(raffle.drawDate).toLocaleString()}</p>
+                <h3>Prize: ${raffle.prize}<h3>
+                <p>Start Date: ${new Date(raffle.startDate).toLocaleString()}</p>
+                <p>End Date: ${new Date(raffle.endDate).toLocaleString()}</p>
+                <p>Draw Date: ${new Date(raffle.drawDate).toLocaleString()}</p>
             `;
             raffleList.appendChild(listItem);
         });
