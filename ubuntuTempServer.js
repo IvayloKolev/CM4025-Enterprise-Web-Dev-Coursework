@@ -64,7 +64,7 @@ app.get("/", async (req, res) => {
 
 // Signup route
 app.post("/signup", async (req, res) => {
-  const { email, username, password } = req.body;
+  const { email, username, password, userType } = req.body;
 
   try {
     // Connect to MongoDB
@@ -99,7 +99,9 @@ app.post("/signup", async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // Set the default user type to "user" unless specified as admin
-    const userType = userType || "user";
+    let userType = "user";
+    userType = userType || "user";
+
 
     // Insert user data into the collection
     const result = await collection.insertOne({
@@ -158,6 +160,7 @@ app.post("/login", async (req, res) => {
       _id: user._id,
       email: user.email,
       username: user.username,
+      type: user.type,
     };
 
     res.redirect("/html/index.html");

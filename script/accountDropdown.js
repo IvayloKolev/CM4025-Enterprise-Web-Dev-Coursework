@@ -24,6 +24,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const logoutButton = document.getElementById('logout-btn');
     const signupButton = document.getElementById('signup-btn');
     const loginButton = document.getElementById('login-btn');
+    const createRaffleButton = document.getElementById('create-raffle-btn'); // Add this line
 
     try {
         // Fetch user authentication status from the server
@@ -33,7 +34,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                 'Content-Type': 'application/json'
             }
         });
-        // Check if a user is admin
+        const userData = await response.json(); // Parse response as JSON
+
         if (userData && userData.type === 'admin') {
             createRaffleButton.style.display = 'block'; // Show create-raffle button for admin users
         }
