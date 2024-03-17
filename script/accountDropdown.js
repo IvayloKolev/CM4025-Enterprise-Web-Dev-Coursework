@@ -33,12 +33,15 @@ document.addEventListener('DOMContentLoaded', async () => {
                 'Content-Type': 'application/json'
             }
         });
-        // Check if a user is admin
-        if (userData && userData.type === 'admin') {
-            createRaffleButton.style.display = 'block'; // Show create-raffle button for admin users
-        }
 
         if (response.ok) {
+            const userData = await response.json();
+
+            // Check if a user is admin
+            if (userData && userData.type === 'admin') {
+                createRaffleButton.style.display = 'block'; // Show create-raffle button for admin users
+            }
+
             // User is logged in, show view account and logout buttons
             viewAccountButton.style.display = 'block';
             logoutButton.style.display = 'block';
