@@ -1,0 +1,8 @@
+#raffleList {
+    flex: 1;
+    margin-left: 20px;
+}
+
+#raffleList li {
+    margin-bottom: 10px;
+}
