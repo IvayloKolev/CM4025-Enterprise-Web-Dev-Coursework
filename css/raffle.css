@@ -13,20 +13,7 @@ main {
 
 #enter-raffle-section {
     margin-top: 20px;
-}
-
-#raffleList {
-    flex: 1;
-    margin-left: 20px;
-}
-
-#raffleList li {
-    margin-bottom: 10px;
-}
-
-#enter-raffle-section {
     text-align: center;
-    margin-top: 20px;
 }
 
 #enter-raffle-button {
