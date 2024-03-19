@@ -295,7 +295,7 @@ app.get("/raffle/:id", async (req, res) => {
 
 // Creating Raffles
 // '*/5 * * * *' for every 5 minutes
-cron.schedule('*/5 * * * * *', async () => {
+cron.schedule('*/5 * * * *', async () => {
   try {
     await createRaffle();
     console.log('Raffle created and pushed to db.');

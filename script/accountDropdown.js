@@ -35,12 +35,13 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         });
         const userData = await response.json(); // Parse response as JSON
+        
+            // Check if a user is admin
+            if (userData && userData.user.type == 'admin') {
+                createRaffleButton.style.display = 'block'; // Show create-raffle button for admin users
+            }
 
-        if (userData && userData.type === 'admin') {
-            createRaffleButton.style.display = 'block'; // Show create-raffle button for admin users
-        }
-
-        if (response.ok) {
+        if (response.ok && userData) {
             // User is logged in, show view account and logout buttons
             viewAccountButton.style.display = 'block';
             logoutButton.style.display = 'block';
@@ -57,3 +58,4 @@ document.addEventListener('DOMContentLoaded', async () => {
         console.error('Error fetching user authentication status:', error);
     }
 });
+
