@@ -22,7 +22,6 @@ async function fetchRafflesAndUpdateList() {
                     <h3>${raffle.name}</h3>
                     <p>Start Date: ${new Date(raffle.startDate).toLocaleString()}</p>
                     <p>End Date: ${new Date(raffle.endDate).toLocaleString()}</p>
-                    <p>Draw Date: ${new Date(raffle.drawDate).toLocaleString()}</p>
                 `;
                 raffleList.appendChild(listItem);
 

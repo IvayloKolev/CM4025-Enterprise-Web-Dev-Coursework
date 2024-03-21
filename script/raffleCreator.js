@@ -1,59 +1,51 @@
-const { MongoClient } = require("mongodb");
+const http = require('http');
+const querystring = require('querystring');
 
 const createRaffle = async () => {
-    const uri = "mongodb://127.0.0.1:27017";
-    const client = new MongoClient(uri);
-
     try {
-        // Connect to MongoDB
-        await client.connect();
-        const db = client.db(); // Get the default database
-        const collection = db.collection("raffles");
-
-        // Get the number of existing raffles to set the new raffle's ID
-        const numRaffles = await collection.countDocuments();
-        const id = numRaffles + 1;
-
         // Generate random details for the new raffle
-
-        const now = new Date();
-        now.setSeconds(0); // Clear seconds
-        now.setMilliseconds(0); // Clear milliseconds
-        const startDate = now.toISOString().slice(0, -8); // Remove seconds and milliseconds
-
-        const end = new Date(now.getTime() + 5 * 60 * 1000);
-        end.setSeconds(0); // Clear seconds
-        end.setMilliseconds(0); // Clear milliseconds
-        const endDate = end.toISOString().slice(0, -8); // Remove seconds and milliseconds
-
-        const draw = new Date(end.getTime() + 1 * 60 * 1000);
-        draw.setSeconds(0); // Clear seconds
-        draw.setMilliseconds(0); // Clear milliseconds
-        const drawDate = draw.toISOString().slice(0, -8); // Remove seconds and milliseconds
-
         const prize = createPrizeName();
+        const startDate = new Date().toISOString();
+        const endDate = new Date(Date.now() + 5 * 60 * 1000).toISOString(); // 5 minutes from now
 
-        // Create the new raffle object
-        const newRaffle = {
-            id,
+        // Data to be sent in the request body
+        const postData = querystring.stringify({
             name: `Raffle for ${prize}`,
             startDate,
             endDate,
-            drawDate,
             prize,
-            participants: [],
-            winner: null,
+        });
+
+        // Options for the HTTP request
+        const options = {
+            hostname: '192.168.17.128',
+            port: 8080,
+            path: '/create-raffle',
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'Content-Length': Buffer.byteLength(postData),
+            },
         };
 
-        // Insert the new raffle into the collection
-        await collection.insertOne(newRaffle);
+        // Make HTTP POST request to create a raffle
+        const req = http.request(options, (res) => {
+            console.log(`statusCode: ${res.statusCode}`);
 
-        console.log(`Raffle created with ID: ${id}`);
+            res.on('data', (data) => {
+                console.log(data.toString());
+            });
+        });
+
+        req.on('error', (error) => {
+            console.error("Error creating raffle:", error);
+        });
+
+        // Write data to request body
+        req.write(postData);
+        req.end();
     } catch (error) {
-        throw new Error("Error creating raffle: " + error.message);
-    } finally {
-        // Close the MongoDB connection when done
-        await client.close();
+        console.error("Error creating raffle:", error.message);
     }
 };
 

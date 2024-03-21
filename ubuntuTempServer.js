@@ -18,6 +18,27 @@ app.use(express.static(path.join(__dirname)));
 // Use body-parser middleware
 app.use(bodyParser.urlencoded({ extended: true }));
 
+// Configuring Web Socket Server for real time updates
+const WebSocket = require('ws');
+const webSocketServer = new WebSocket.Server({ server: app });
+
+webSocketServer.on('connection', function connection(ws) {
+  console.log('Client connected to ws Server');
+
+  ws.on('message', function incoming(message) {
+    console.log('received: %s', message);
+  });
+
+  ws.send('Client connected to ws Server');
+});
+
+// Attach WebSocket upgrade event to Express app
+app.on('upgrade', (request, socket, head) => {
+  webSocketServer.handleUpgrade(request, socket, head, (ws) => {
+    webSocketServer.emit('connection', ws, request);
+  });
+});
+
 // MongoDB Connection
 const uri = "mongodb://127.0.0.1:27017";
 const client = new MongoClient(uri);
@@ -211,7 +232,7 @@ app.get("/profile", (req, res) => {
 
 // Create raffle route
 app.post("/create-raffle", async (req, res) => {
-  const { name, startDate, endDate, drawDate, prize } = req.body;
+  const { name, startDate, endDate, prize } = req.body;
 
   try {
     // Connect to MongoDB
@@ -229,7 +250,7 @@ app.post("/create-raffle", async (req, res) => {
       name,
       startDate,
       endDate,
-      drawDate,
+      ended: false,
       prize,
       participants: [],
       winner: null

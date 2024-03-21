@@ -23,7 +23,6 @@ fetch(`/raffle/${raffleId}`)
         document.getElementById('raffle-prize-header').innerText = data.prize;
         document.getElementById('raffle-prize').innerText = data.prize;
         document.getElementById('raffle-start-date').innerText = data.startDate;
-        document.getElementById('raffle-end-date').innerText = data.endDate;
         document.getElementById('raffle-draw-date').innerText = data.drawDate;
     })
     .catch(error => {
