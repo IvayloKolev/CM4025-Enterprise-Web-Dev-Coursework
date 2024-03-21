@@ -20,6 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 document.addEventListener('DOMContentLoaded', async () => {
     // Get reference to dropdown content elements
+    const myAccountBtton = document.getElementById('my-account-btn');
     const viewAccountButton = document.getElementById('account-btn');
     const logoutButton = document.getElementById('logout-btn');
     const signupButton = document.getElementById('signup-btn');
@@ -31,6 +32,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     logoutButton.style.display = 'none'; // Hide logout button
     signupButton.style.display = 'block';
     loginButton.style.display = 'block';
+    myAccountBtton.textContent = 'My Account';
 
     try {
         // Fetch user authentication status from the server
@@ -55,6 +57,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             logoutButton.style.display = 'block';
             signupButton.style.display = 'none'; // Hide signup button
             loginButton.style.display = 'none'; // Hide login button
+            myAccountBtton.textContent = 'Welcome ' + userData.user.username + '!';
         }
 
     } catch (error) {
