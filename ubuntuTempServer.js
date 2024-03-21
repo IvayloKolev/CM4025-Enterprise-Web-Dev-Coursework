@@ -114,6 +114,14 @@ app.post("/signup", async (req, res) => {
     });
 
     console.log(`User inserted with _id: ${userId}`);
+    
+    // Automatically log in the user after signup
+    req.session.user = {
+      _id: userId,
+      email,
+      username,
+      type: userType,
+    };
 
     res.redirect("/html/index.html"); // Redirect to the home page after successful signup
   } catch (error) {
