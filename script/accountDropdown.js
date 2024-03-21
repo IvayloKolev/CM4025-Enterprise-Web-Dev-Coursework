@@ -25,7 +25,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const signupButton = document.getElementById('signup-btn');
     const loginButton = document.getElementById('login-btn');
     const createRaffleButton = document.getElementById('create-raffle-btn');
-    
+
     // User is not logged in by default, show signup and login buttons
     viewAccountButton.style.display = 'none'; // Hide view account button
     logoutButton.style.display = 'none'; // Hide logout button
@@ -40,23 +40,23 @@ document.addEventListener('DOMContentLoaded', async () => {
                 'Content-Type': 'application/json'
             }
         });
-        
+
         const userData = await response.json(); // Parse response as JSON
-        
+
         // Check if a user is admin
         if (userData && userData.user.type == 'admin') {
             createRaffleButton.style.display = 'block'; // Show create-raffle button for admin users
         }
 
         if (response.ok && userData) {
-        	console.log("if");
+            console.log("if");
             // User is logged in, show view account and logout buttons
             viewAccountButton.style.display = 'block';
             logoutButton.style.display = 'block';
             signupButton.style.display = 'none'; // Hide signup button
             loginButton.style.display = 'none'; // Hide login button
         }
-        
+
     } catch (error) {
         console.error('Error fetching user authentication status:', error);
     }

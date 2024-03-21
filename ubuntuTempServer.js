@@ -110,6 +110,7 @@ app.post("/signup", async (req, res) => {
       email,
       username,
       password: hashedPassword,
+      prizes: []
     });
 
     console.log(`User inserted with _id: ${userId}`);
