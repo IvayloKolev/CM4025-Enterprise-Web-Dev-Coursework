@@ -12,7 +12,7 @@ async function fetchRafflesAndUpdateList() {
         // Filter out raffles with end dates in the past
         const activeRaffles = data.filter(raffle => new Date(raffle.endDate) > new Date());
 
-        activeRaffles.forEach(raffle => {
+        activeRaffles.forEach(async raffle => {
             // Check if the raffle already exists in the list
             if (!raffleList.querySelector(`li[data-raffle-id="${raffle.id}"]`)) {
                 const listItem = document.createElement('li');
@@ -22,8 +22,21 @@ async function fetchRafflesAndUpdateList() {
                     <h3>${raffle.name}</h3>
                     <p>Start Date: ${new Date(raffle.startDate).toLocaleString()}</p>
                     <p>End Date: ${new Date(raffle.endDate).toLocaleString()}</p>
+                    <p id='participants-paragraph' style="display: none;>Participants: ${participants}</p>
                 `;
                 raffleList.appendChild(listItem);
+
+                const response = await fetch('/profile', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                // Check if a user is admin
+                if (userData && userData.user.type == 'admin') {
+                    listItem.querySelector('#participants-paragraph').style.display = 'block';
+                }
 
                 // Add event listener to the new list item
                 addEventListenerToRaffleItem(listItem);

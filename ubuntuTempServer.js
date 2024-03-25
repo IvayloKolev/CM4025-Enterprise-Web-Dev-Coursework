@@ -135,7 +135,7 @@ app.post("/signup", async (req, res) => {
     });
 
     console.log(`User inserted with _id: ${userId}`);
-    
+
     // Automatically log in the user after signup
     req.session.user = {
       _id: userId,
