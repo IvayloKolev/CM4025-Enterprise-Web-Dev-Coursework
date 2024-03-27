@@ -230,6 +230,47 @@ app.get("/profile", (req, res) => {
   }
 });
 
+// Enter Raffle route
+app.post("/enter-raffle", async (req, res) => {
+    try {
+        // Check if the user is logged in
+        if (!req.session.user) {
+            return res.status(401).send("You need to log in to enter the raffle");
+        }
+
+        const userId = req.session.user._id; // Get the user's ID from the session
+        const { raffleId } = req.body; // Get the raffle ID from the request body
+
+        // Connect to MongoDB
+        await client.connect();
+        const db = client.db(); // Get the default database
+        const raffleCollection = db.collection("raffles");
+
+        // Find the raffle with the specified ID
+        const raffle = await raffleCollection.findOne({ id: raffleId });
+
+        if (!raffle) {
+            // If raffle not found, return 404 error
+            return res.status(404).json({ error: "Raffle not found" });
+        }
+
+        // Add the user's ID to the participants array
+        await raffleCollection.updateOne(
+            { id: raffleId },
+            { $push: { participants: userId } }
+        );
+
+        // Send a success response
+        res.status(200).send("You have successfully entered the raffle");
+    } catch (error) {
+        console.error("Error entering the raffle:", error);
+        res.status(500).send("Internal Server Error");
+    } finally {
+        // Close the MongoDB connection when done
+        await client.close();
+    }
+});
+
 // Create raffle route
 app.post("/create-raffle", async (req, res) => {
   const { name, startDate, endDate, prize } = req.body;
@@ -260,8 +301,6 @@ app.post("/create-raffle", async (req, res) => {
     await collection.insertOne(newRaffle);
 
     console.log(`Raffle created with ID: ${id}`);
-
-    res.status(201).send(`Raffle created with ID: ${id}`);
   } catch (error) {
     console.error("Error creating raffle:", error);
     res.status(500).send("Internal Server Error");
@@ -325,6 +364,7 @@ app.get("/raffle/:id", async (req, res) => {
 
 // Creating Raffles
 // '*/5 * * * *' for every 5 minutes
+// '*/30 * * * * *' for every 30 seconds
 cron.schedule('*/5 * * * *', async () => {
   try {
     await createRaffle();

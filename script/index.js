@@ -9,8 +9,18 @@ async function fetchRafflesAndUpdateList() {
 
         const raffleList = document.getElementById('active-raffles-list');
 
-        // Filter out raffles with end dates in the past
-        const activeRaffles = data.filter(raffle => new Date(raffle.endDate) > new Date());
+        // Filter out active raffles based on end date
+        const currentDate = new Date();
+        const activeRaffles = data.filter(raffle => new Date(raffle.endDate) > currentDate);
+
+        // Remove ended raffles from the list
+        const raffleItems = raffleList.querySelectorAll('li');
+        raffleItems.forEach(item => {
+            const raffleId = item.getAttribute('data-raffle-id');
+            if (!activeRaffles.find(raffle => raffle.id === raffleId)) {
+                raffleList.removeChild(item);
+            }
+        });
 
         activeRaffles.forEach(async raffle => {
             // Check if the raffle already exists in the list
@@ -22,20 +32,26 @@ async function fetchRafflesAndUpdateList() {
                     <h3>${raffle.name}</h3>
                     <p>Start Date: ${new Date(raffle.startDate).toLocaleString()}</p>
                     <p>End Date: ${new Date(raffle.endDate).toLocaleString()}</p>
-                    <p id='participants-paragraph' style="display: none;>Participants: ${participants}</p>
+                    <p id='participants-paragraph' style="display: none;">Participants: ${participants}</p>
                 `;
                 raffleList.appendChild(listItem);
 
-                const response = await fetch('/profile', {
+                // Fetch user data
+                const userDataResponse = await fetch('/profile', {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json'
                     }
                 });
 
+                const userData = await userDataResponse.json();
+
                 // Check if a user is admin
-                if (userData && userData.user.type == 'admin') {
-                    listItem.querySelector('#participants-paragraph').style.display = 'block';
+                if (userData && userData.user && userData.user.type == 'admin') {
+                    const participantsParagraph = listItem.querySelector('#participants-paragraph');
+                    if (participantsParagraph) {
+                        participantsParagraph.style.display = 'block';
+                    }
                 }
 
                 // Add event listener to the new list item
@@ -69,5 +85,5 @@ function addEventListenerToRaffleItem(item) {
 fetchRafflesAndUpdateList();
 
 // Schedule periodic updates every thirty seconds
-// 30000 for 30 sec, testing with 1
-setInterval(fetchRafflesAndUpdateList, 1000);
+setInterval(fetchRafflesAndUpdateList, 30000); // 30 seconds
+

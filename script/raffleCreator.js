@@ -6,7 +6,7 @@ const createRaffle = async () => {
         // Generate random details for the new raffle
         const prize = createPrizeName();
         const startDate = new Date().toISOString();
-        const endDate = new Date(Date.now() + 5 * 60 * 1000).toISOString(); // 5 minutes from now
+        const endDate = new Date(Date.now() + 30 * 60 * 1000).toISOString(); // 30 minutes from now
 
         // Data to be sent in the request body
         const postData = querystring.stringify({
