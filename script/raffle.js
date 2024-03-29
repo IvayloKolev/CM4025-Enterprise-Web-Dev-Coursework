@@ -15,7 +15,6 @@ function fetchRaffleInfo(raffleId) {
             return response.json();
         })
         .then(data => {
-            console.log('Raffle data:', data);
             // Populate the page with the retrieved raffle information
             document.getElementById('raffle-name').innerText = data.name;
             document.getElementById('raffle-prize-header').innerText = data.prize;
@@ -33,26 +32,29 @@ function fetchRaffleInfo(raffleId) {
 // Function to enter the raffle
 async function enterRaffle(raffleId, userId) {
     try {
-    console.log("Attempt to enter raffle");
-        // Send a request to the server to enter the raffle
+        console.log("Attempt to enter raffle with raffleId:", raffleId, "and userId:", userId);
+        
+        const requestBody = JSON.stringify({ raffleId: raffleId.toString(), userId });
+        
+        console.log("Request body:", requestBody);
+        
         const response = await fetch("/enter-raffle", {
             method: 'POST',
-            body: JSON.stringify({ raffleId, userId }),
             headers: {
                 'Content-Type': 'application/json'
-            }
+            },
+            body: requestBody
         });
-        console.log("Enter raffle response received: " + JSON.stringify(response));
+
+        console.log("Enter raffle response received:", response);
+
         if (response.ok) {
-            // Raffle entry successful, display a success message to the user
             alert('You have successfully entered the raffle!');
         } else {
-            // Raffle entry failed, display an error message to the user
             alert('Failed to enter the raffle. Please try again later.');
         }
     } catch (error) {
         console.error('Error entering the raffle:', error);
-        // Display an error message to the user
         alert('An error occurred while entering the raffle. Please try again later.');
     }
 }
@@ -77,8 +79,6 @@ document.addEventListener('DOMContentLoaded', () => {
             enterRaffleButton.addEventListener('click', () => {
                 // Call enterRaffle function with both raffle ID and user ID
                 enterRaffle(raffleId, userId);
-                console.log("User id: " + userId);
-                console.log("Raffle id: " + raffleId);
             });
         } else {
             console.error('User information not found');

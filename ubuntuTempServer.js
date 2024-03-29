@@ -18,6 +18,9 @@ app.use(express.static(path.join(__dirname)));
 // Use body-parser middleware
 app.use(bodyParser.urlencoded({ extended: true }));
 
+// Use Json
+app.use(express.json());
+
 // Configuring Web Socket Server for real time updates
 const WebSocket = require('ws');
 const webSocketServer = new WebSocket.Server({ server: app });
@@ -85,6 +88,7 @@ app.get("/", async (req, res) => {
 
 // Signup route
 app.post("/signup", async (req, res) => {
+  console.log("Signup Route");
   const { email, username, password, userType } = req.body;
 
   try {
@@ -156,6 +160,7 @@ app.post("/signup", async (req, res) => {
 
 // Login route
 app.post("/login", async (req, res) => {
+  console.log("Login Route");
   const { email, password } = req.body;
 
   try {
@@ -208,6 +213,7 @@ app.post("/login", async (req, res) => {
 
 // Logout route
 app.get('/logout', (req, res) => {
+  console.log("Logout Route");
   req.session.destroy((err) => {
     if (err) {
       console.error('Error destroying session:', err);
@@ -219,6 +225,7 @@ app.get('/logout', (req, res) => {
 
 // Profile route
 app.get("/profile", (req, res) => {
+  console.log("Profile Route");
   // Check if the user is logged in
   if (req.session.user) {
     // Send user information as JSON
@@ -234,51 +241,42 @@ app.get("/profile", (req, res) => {
 app.post("/enter-raffle", async (req, res) => {
     try {
         console.log("Enter Raffle route");
-
-        const userId = req.body.userId;
-        const raffleId = req.body.raffleId;
-
-        console.log("Debug 1");
+        const { userId, raffleId } = req.body;
 
         // Connect to MongoDB
         await client.connect();
         const db = client.db(); // Get the default database
         const raffles = db.collection("raffles");
 
-        console.log("Debug 2");
-
         // Find the raffle with the specified ID
-        const raffle = await raffles.findOne({ id: raffleId });
-
-        console.log("Raffle:", raffle);
-
-        console.log("Debug 3");
+        const raffle = await raffles.findOne({ id: parseInt(raffleId) });
 
         if (!raffle) {
             // If raffle not found, return 404 error
-            console.log("Debug 4");
             return res.status(404).json({ error: "Raffle not found" });
         }
 
-        console.log("Debug 5");
-
         // Add the user's ID to the participants array
-        const result = await raffleCollection.updateOne(
-            { id: raffleId },
+        const result = await raffles.updateOne(
+            { id: parseInt(raffleId) },
             { $push: { participants: userId } }
         );
-
-        console.log("Debug 6", result);
 
         // Send a success response
         res.status(200).send("You have successfully entered the raffle");
     } catch (error) {
         console.error("Error entering the raffle:", error);
         res.status(500).send("Internal Server Error");
+    } finally {
+        // Close the MongoDB connection when done
+        await client.close();
     }
 });
+
+
 // Create raffle route
 app.post("/create-raffle", async (req, res) => {
+  console.log("Create Raffle Route");
   const { name, startDate, endDate, prize } = req.body;
 
   try {
@@ -318,6 +316,7 @@ app.post("/create-raffle", async (req, res) => {
 
 // All Raffles route
 app.get("/all-raffles", async (req, res) => {
+  console.log("Get All Raffles Route");
   try {
     // Connect to MongoDB
     await client.connect();
@@ -340,6 +339,7 @@ app.get("/all-raffles", async (req, res) => {
 
 // Get raffle by ID route
 app.get("/raffle/:id", async (req, res) => {
+  console.log("Get Raffle by ID Route");
   const raffleId = req.params.id;
 
   try {
