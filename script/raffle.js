@@ -31,18 +31,18 @@ function fetchRaffleInfo(raffleId) {
 }
 
 // Function to enter the raffle
-async function enterRaffle(raffleId) {
+async function enterRaffle(raffleId, userId) {
     try {
+    console.log("Attempt to enter raffle");
         // Send a request to the server to enter the raffle
         const response = await fetch("/enter-raffle", {
             method: 'POST',
-            credentials: 'include', // Include cookies in the request
-            body: JSON.stringify({ raffleId }), // Send the raffle ID in the request body
+            body: JSON.stringify({ raffleId, userId }),
             headers: {
                 'Content-Type': 'application/json'
             }
         });
-
+        console.log("Enter raffle response received: " + JSON.stringify(response));
         if (response.ok) {
             // Raffle entry successful, display a success message to the user
             alert('You have successfully entered the raffle!');
@@ -61,13 +61,31 @@ document.addEventListener('DOMContentLoaded', () => {
     const enterRaffleButton = document.getElementById('enter-raffle-button');
     const raffleId = parseInt(getQueryParam('id'));
 
+    // Fetch user information when the DOM is loaded
+    fetch('/profile', {
+        method: 'GET',
+        credentials: 'include', // Include cookies in the request
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.user) {
+            const userId = data.user._id; // Get the user ID
+            // Add event listener to enter raffle button
+            enterRaffleButton.addEventListener('click', () => {
+                // Call enterRaffle function with both raffle ID and user ID
+                enterRaffle(raffleId, userId);
+                console.log("User id: " + userId);
+                console.log("Raffle id: " + raffleId);
+            });
+        } else {
+            console.error('User information not found');
+        }
+    })
+    .catch(error => console.error('Error fetching user profile:', error));
+
     // Fetch raffle information when the DOM is loaded
     fetchRaffleInfo(raffleId);
-
-    // Add event listener to enter raffle button
-    enterRaffleButton.addEventListener('click', () => {
-        // Call enterRaffle function when the button is clicked
-        enterRaffle(raffleId);
-    });
 });
-

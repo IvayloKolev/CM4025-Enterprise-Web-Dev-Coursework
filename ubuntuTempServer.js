@@ -233,44 +233,50 @@ app.get("/profile", (req, res) => {
 // Enter Raffle route
 app.post("/enter-raffle", async (req, res) => {
     try {
-        // Check if the user is logged in
-        if (!req.session.user) {
-            return res.status(401).send("You need to log in to enter the raffle");
-        }
+        console.log("Enter Raffle route");
 
-        const userId = req.session.user._id; // Get the user's ID from the session
-        const { raffleId } = req.body; // Get the raffle ID from the request body
+        const userId = req.body.userId;
+        const raffleId = req.body.raffleId;
+
+        console.log("Debug 1");
 
         // Connect to MongoDB
         await client.connect();
         const db = client.db(); // Get the default database
-        const raffleCollection = db.collection("raffles");
+        const raffles = db.collection("raffles");
+
+        console.log("Debug 2");
 
         // Find the raffle with the specified ID
-        const raffle = await raffleCollection.findOne({ id: raffleId });
+        const raffle = await raffles.findOne({ id: raffleId });
+
+        console.log("Raffle:", raffle);
+
+        console.log("Debug 3");
 
         if (!raffle) {
             // If raffle not found, return 404 error
+            console.log("Debug 4");
             return res.status(404).json({ error: "Raffle not found" });
         }
 
+        console.log("Debug 5");
+
         // Add the user's ID to the participants array
-        await raffleCollection.updateOne(
+        const result = await raffleCollection.updateOne(
             { id: raffleId },
             { $push: { participants: userId } }
         );
+
+        console.log("Debug 6", result);
 
         // Send a success response
         res.status(200).send("You have successfully entered the raffle");
     } catch (error) {
         console.error("Error entering the raffle:", error);
         res.status(500).send("Internal Server Error");
-    } finally {
-        // Close the MongoDB connection when done
-        await client.close();
     }
 });
-
 // Create raffle route
 app.post("/create-raffle", async (req, res) => {
   const { name, startDate, endDate, prize } = req.body;
