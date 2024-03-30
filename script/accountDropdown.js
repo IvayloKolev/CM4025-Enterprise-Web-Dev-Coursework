@@ -25,7 +25,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     const logoutButton = document.getElementById('logout-btn');
     const signupButton = document.getElementById('signup-btn');
     const loginButton = document.getElementById('login-btn');
-    const createRaffleButton = document.getElementById('create-raffle-btn');
 
     // User is not logged in by default, show signup and login buttons
     viewAccountButton.style.display = 'none'; // Hide view account button
@@ -44,11 +43,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
 
         const userData = await response.json(); // Parse response as JSON
-
-        // Check if a user is admin
-        if (userData && userData.user.type == 'admin' && createRaffleButton != null) {
-            createRaffleButton.style.display = 'block'; // Show create-raffle button for admin users
-        }
 
         if (response.ok && userData) {
             // User is logged in, show view account and logout buttons

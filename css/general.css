@@ -73,10 +73,6 @@ footer {
     background-color: #ffd700;
 }
 
-#create-raffle-btn {
-    display: none;
-}
-
 .account-dropdown {
     position: relative;
     display: inline-block;

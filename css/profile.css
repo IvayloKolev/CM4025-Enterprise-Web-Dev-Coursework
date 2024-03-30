@@ -6,3 +6,24 @@
 #logout-section {
     text-align: center;
 }
+
+#prizes-section {
+    margin-top: 20px;
+}
+
+#prize-list {
+    list-style-type: none;
+    padding: 0;
+}
+
+#prize-list li {
+    background-color: #04010a;
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+
+#prize-list li:last-child {
+    margin-bottom: 0;
+}
+

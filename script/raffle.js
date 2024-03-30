@@ -59,8 +59,39 @@ async function enterRaffle(raffleId, userId) {
     }
 }
 
+// Function to leave the raffle
+async function leaveRaffle(raffleId, userId) {
+    try {
+        console.log("Attempt to leave raffle with raffleId:", raffleId, "and userId:", userId);
+        
+        const requestBody = JSON.stringify({ raffleId: raffleId.toString(), userId });
+        
+        console.log("Request body:", requestBody);
+        
+        const response = await fetch("/leave-raffle", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: requestBody
+        });
+
+        console.log("Leave raffle response received:", response);
+
+        if (response.ok) {
+            alert('You have successfully left the raffle!');
+        } else {
+            alert('Failed to leave the raffle. Please try again later.');
+        }
+    } catch (error) {
+        console.error('Error leaving the raffle:', error);
+        alert('An error occurred while leaving the raffle. Please try again later.');
+    }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     const enterRaffleButton = document.getElementById('enter-raffle-button');
+    const leaveRaffleButton = document.getElementById('leave-raffle-button'); // New button
     const raffleId = parseInt(getQueryParam('id'));
 
     // Fetch user information when the DOM is loaded
@@ -75,10 +106,17 @@ document.addEventListener('DOMContentLoaded', () => {
     .then(data => {
         if (data.user) {
             const userId = data.user._id; // Get the user ID
+            
             // Add event listener to enter raffle button
             enterRaffleButton.addEventListener('click', () => {
                 // Call enterRaffle function with both raffle ID and user ID
                 enterRaffle(raffleId, userId);
+            });
+
+            // Add event listener to leave raffle button
+            leaveRaffleButton.addEventListener('click', () => {
+                // Call leaveRaffle function with both raffle ID and user ID
+                leaveRaffle(raffleId, userId);
             });
         } else {
             console.error('User information not found');

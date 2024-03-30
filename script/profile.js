@@ -2,6 +2,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const usernameElement = document.getElementById('username');
     const emailElement = document.getElementById('email');
     const logoutButton = document.getElementById('logout-button');
+    const prizeList = document.getElementById('prize-list');
 
     // Fetch user information from the server
     fetch('/profile', {
@@ -13,10 +14,21 @@ document.addEventListener('DOMContentLoaded', () => {
     })
         .then(response => response.json())
         .then(data => {
-            // Update the profile page with user information
-            if (data.user) {
-                usernameElement.textContent = data.user.username;
-                emailElement.textContent = data.user.email;
+            // Check if data exists and is not empty
+            if (data && data.user) {
+                const user = data.user;
+                usernameElement.textContent = user.username;
+                emailElement.textContent = user.email;
+
+                // Update the prize list with user's prizes
+                if (user.prizes && user.prizes.length > 0) {
+                    console.log("Prizes: " + JSON.stringify(user.prizes));
+                    prizeList.innerHTML = user.prizes.map(prize => `<li>${prize}</li>`).join('');
+                } else {
+                    prizeList.innerHTML = '<li>No prizes yet</li>';
+                }
+            } else {
+                console.log("No user data found");
             }
         })
         .catch(error => console.error('Error fetching user profile:', error));
@@ -37,3 +49,4 @@ document.addEventListener('DOMContentLoaded', () => {
             .catch(error => console.error('Error logging out:', error));
     });
 });
+

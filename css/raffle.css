@@ -17,7 +17,7 @@ main {
 }
 
 #enter-raffle-button {
-    font-size: 1.2em;
+    font-size: 2em;
     padding: 10px 20px;
 }
 
@@ -26,4 +26,14 @@ main {
     bottom: 20px;
     left: 50%;
     transform: translateX(-50%);
+}
+
+#leave-raffle-section {
+    margin-top: 20px;
+    text-align: center;
+}
+
+#leave-raffle-button {
+    font-size: 1em;
+    padding: 10px 20px;
 }

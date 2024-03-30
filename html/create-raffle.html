@@ -27,13 +27,13 @@
     <main>
         <div class="raffle-form">
             <h2>Create Raffle</h2>
-            <form action="/create-raffle" method="POST">
+            <form id="create-raffle-form" action="/create-raffle" method="POST">
                 <label for="name">Name:</label><br>
                 <input type="text" id="name" name="name" required><br>
                 <label for="startDate">Start Date:</label><br>
                 <input type="datetime-local" id="startDate" name="startDate" required><br>
                 <label for="endDate">End Date:</label><br>
-                <input type="datetime-local" id="drawDate" name="drawDate" required><br>
+                <input type="datetime-local" id="endDate" name="endDate" required><br>
                 <label for="prize">Prize:</label><br>
                 <input type="text" id="prize" name="prize" required><br><br>
                 <input type="submit" class="action-button" value="Create Raffle">
@@ -43,11 +43,6 @@
         <button class="action-button" onclick="window.location.href='/html/index.html';">
             Back to Home
         </button>
-
-        <div id="raffleListContainer">
-            <h2>All Raffles</h2>
-            <ul id="raffleList"></ul>
-        </div>
     </main>
 
     <footer>
@@ -57,29 +52,7 @@
     </footer>
 
     <script src="/script/accountDropdown.js"></script>
-
-    <script>
-        // Fetch all raffles and display them in the list
-        fetch('/all-raffles')
-            .then(response => response.json())
-            .then(data => {
-                const raffleList = document.getElementById('raffleList');
-                raffleList.innerHTML = ''; // Clear previous list items
-
-                data.forEach(raffle => {
-                    const listItem = document.createElement('li');
-                    let participants = raffle.participants.length > 0 ? raffle.participants.join(', ') : 'None';
-                    listItem.innerHTML = `Name: ${raffle.name},<br>
-                    Start Date: ${raffle.startDate},<br>
-                    End Date: ${raffle.endDate},<br>
-                    Draw Date: ${raffle.drawDate},<br>
-                    Prize: ${raffle.prize},<br>
-                    Participants: ${participants}`; // Assuming participants is an array
-                    raffleList.appendChild(listItem);
-                });
-            })
-            .catch(error => console.error('Error fetching raffles:', error));
-    </script>
+    <script src="/script/createRaffle.js"></script>
 </body>
 
 </html>

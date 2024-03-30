@@ -135,6 +135,7 @@ app.post("/signup", async (req, res) => {
       email,
       username,
       password: hashedPassword,
+      raffles: [],
       prizes: []
     });
 
@@ -146,6 +147,8 @@ app.post("/signup", async (req, res) => {
       email,
       username,
       type: userType,
+      raffles: [],
+      prizes: [],
     };
 
     res.redirect("/html/index.html"); // Redirect to the home page after successful signup
@@ -196,6 +199,8 @@ app.post("/login", async (req, res) => {
       email: user.email,
       username: user.username,
       type: user.type,
+      raffles: user.raffles,
+      prizes: user.prizes
     };
 
     res.redirect("/html/index.html");
@@ -237,47 +242,118 @@ app.get("/profile", (req, res) => {
   }
 });
 
-// Enter Raffle route
-app.post("/enter-raffle", async (req, res) => {
-    try {
-        console.log("Enter Raffle route");
-        const { userId, raffleId } = req.body;
+// User info by id route
+app.get("/user/:id", async (req, res) => {
+  try {
+    console.log("User info by id Route");
+    const userId = req.params.id;
 
-        // Connect to MongoDB
-        await client.connect();
-        const db = client.db(); // Get the default database
-        const raffles = db.collection("raffles");
+    // Connect to MongoDB
+    await client.connect();
+    const db = client.db();
+    const collection = db.collection("users");
 
-        // Find the raffle with the specified ID
-        const raffle = await raffles.findOne({ id: parseInt(raffleId) });
+    // Find the user by ID
+    const user = await collection.findOne({ _id: userId });
 
-        if (!raffle) {
-            // If raffle not found, return 404 error
-            return res.status(404).json({ error: "Raffle not found" });
-        }
-
-        // Add the user's ID to the participants array
-        const result = await raffles.updateOne(
-            { id: parseInt(raffleId) },
-            { $push: { participants: userId } }
-        );
-
-        // Send a success response
-        res.status(200).send("You have successfully entered the raffle");
-    } catch (error) {
-        console.error("Error entering the raffle:", error);
-        res.status(500).send("Internal Server Error");
-    } finally {
-        // Close the MongoDB connection when done
-        await client.close();
+    if (user) {
+      // If user found, send their information as JSON response
+      res.json({ name: user.username, email: user.email });
+    } else {
+      // If user not found, return 404 error
+      res.status(404).json({ error: "User not found" });
     }
+  } catch (error) {
+    console.error("Error fetching user:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  } finally {
+    // Close the MongoDB connection when done
+    await client.close();
+  }
 });
 
+
+// Enter Raffle route
+app.post("/enter-raffle", async (req, res) => {
+  try {
+    console.log("Enter Raffle route");
+    const { userId, raffleId } = req.body;
+
+    // Connect to MongoDB
+    await client.connect();
+    const db = client.db(); // Get the default database
+    const raffles = db.collection("raffles");
+
+    // Find the raffle with the specified ID
+    const raffle = await raffles.findOne({ id: parseInt(raffleId) });
+
+    if (!raffle) {
+      // If raffle not found, return 404 error
+      return res.status(404).json({ error: "Raffle not found" });
+    }
+
+    if (raffle.ended) {
+      // If raffle has ended, return error
+      return res.status(400).json({ error: "Raffle has ended" });
+    }
+
+    // Add the user's ID to the participants array
+    const result = await raffles.updateOne(
+      { id: parseInt(raffleId) },
+      { $push: { participants: userId } }
+    );
+
+    // Send a success response
+    res.status(200).send("You have successfully entered the raffle");
+  } catch (error) {
+    console.error("Error entering the raffle:", error);
+    res.status(500).send("Internal Server Error");
+  } finally {
+    // Close the MongoDB connection when done
+    await client.close();
+  }
+});
+
+// Leave Raffle route
+app.post("/leave-raffle", async (req, res) => {
+  try {
+    console.log("Leave Raffle route");
+    const { userId, raffleId } = req.body;
+
+    // Connect to MongoDB
+    await client.connect();
+    const db = client.db(); // Get the default database
+    const raffles = db.collection("raffles");
+
+    // Find the raffle with the specified ID
+    const raffle = await raffles.findOne({ id: parseInt(raffleId) });
+
+    if (!raffle) {
+      // If raffle not found, return 404 error
+      return res.status(404).json({ error: "Raffle not found" });
+    }
+
+    // Remove the user's ID from the participants array
+    const result = await raffles.updateOne(
+      { id: parseInt(raffleId) },
+      { $pull: { participants: userId } }
+    );
+
+    // Send a success response
+    res.status(200).send("You have successfully left the raffle");
+  } catch (error) {
+    console.error("Error leaving the raffle:", error);
+    res.status(500).send("Internal Server Error");
+  } finally {
+    // Close the MongoDB connection when done
+    await client.close();
+  }
+});
 
 // Create raffle route
 app.post("/create-raffle", async (req, res) => {
   console.log("Create Raffle Route");
-  const { name, startDate, endDate, prize } = req.body;
+  const { name, startDate, endDate, prize, userId } = req.body;
 
   try {
     // Connect to MongoDB
@@ -285,29 +361,35 @@ app.post("/create-raffle", async (req, res) => {
     const db = client.db(); // Get the default database
     const collection = db.collection("raffles");
 
-    // Get the number of existing raffles to set the new raffle's ID
-    const numRaffles = await collection.countDocuments();
-    const id = numRaffles + 1;
-
     // Create the new raffle object
     const newRaffle = {
-      id,
       name,
       startDate,
       endDate,
       ended: false,
       prize,
       participants: [],
-      winner: null
+      winner: null,
+      owner: userId
     };
 
     // Insert the new raffle into the collection
     await collection.insertOne(newRaffle);
 
-    console.log(`Raffle created with ID: ${id}`);
+    // Update the user's raffles list with the new raffle ID
+    const userCollection = db.collection("users");
+    await userCollection.updateOne(
+      { _id: userId },
+      { $push: { raffles: newRaffle._id } }
+    );
+
+    console.log(`Raffle created with name: ${name}`);
+    
+    // Send a success response
+    res.status(201).json({ message: "Raffle created successfully", raffle: newRaffle });
   } catch (error) {
     console.error("Error creating raffle:", error);
-    res.status(500).send("Internal Server Error");
+    res.status(500).json({ error: "Internal Server Error" });
   } finally {
     // Close the MongoDB connection when done
     await client.close();
@@ -367,18 +449,88 @@ app.get("/raffle/:id", async (req, res) => {
   }
 });
 
-
-// Creating Raffles
-// '*/5 * * * *' for every 5 minutes
-// '*/30 * * * * *' for every 30 seconds
-cron.schedule('*/5 * * * *', async () => {
+// Check raffle end dates every minute
+// '* * * * *'
+cron.schedule('* * * * *', async () => {
   try {
-    await createRaffle();
-    console.log('Raffle created and pushed to db.');
+    console.log("Checking raffle end dates");
+    // Connect to MongoDB
+    await client.connect();
+    const db = client.db(); // Get the default database
+    const raffles = db.collection("raffles");
+
+    // Find all active raffles whose end dates have passed but winners have not been selected
+    const expiredRaffles = await raffles.find({ ended: false }).toArray();
+
+    const currentDate = new Date();
+
+    for (const raffle of expiredRaffles) {
+      const endDate = new Date(raffle.endDate);
+
+      if (!isNaN(endDate) && endDate <= currentDate) {
+        await selectWinner(raffle.id);
+      }
+    }
   } catch (error) {
-    console.error('Error creating raffle:', error);
+    console.error("Error checking raffle end dates:", error);
+  } finally {
+    // Close the MongoDB connection when done
+    await client.close();
   }
 });
+
+// Select a Winner function
+async function selectWinner(raffleId) {
+  try {
+    // Connect to MongoDB
+    await client.connect();
+    const db = client.db(); // Get the default database
+    const raffles = db.collection("raffles");
+    const users = db.collection("users");
+
+    const raffle = await raffles.findOne({ id: parseInt(raffleId) });
+
+    if (!raffle) {
+      console.error("Raffle not found");
+      return;
+    }
+
+    if (raffle.participants.length == 0) {
+      console.log("Raffle " + raffleId + " has ended with no participants. No winner is drawn");
+      await raffles.updateOne(
+        { id: parseInt(raffleId) },
+        { $set: { ended: true } }
+      );
+      return;
+    }
+
+    // Select a random winner from the participants list
+    const winnerIndex = Math.floor(Math.random() * raffle.participants.length);
+    const winnerId = raffle.participants[winnerIndex];
+
+    // Update the raffle object with the winner's information
+    await raffles.updateOne(
+      { id: parseInt(raffleId) },
+      { $set: { winner: winnerId, ended: true } }
+    );
+
+    // Get the prize string
+    const prize = raffle.prize;
+
+    // Add the prize string to the user's prizes array
+    await users.updateOne(
+      { _id: winnerId },
+      { $push: { prizes: prize } }
+    );
+
+    console.log(`Winner selected for raffle ${raffleId}: ${winnerId}`);
+  } catch (error) {
+    console.error("Error selecting winner:", error);
+  } finally {
+    // Close the MongoDB connection when done
+    await client.close();
+  }
+}
 
 // Start the server
 app.listen(port, "0.0.0.0", () => {

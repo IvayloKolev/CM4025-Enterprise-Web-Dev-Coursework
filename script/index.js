@@ -23,41 +23,70 @@ async function fetchRafflesAndUpdateList() {
         });
 
         activeRaffles.forEach(async raffle => {
-            // Check if the raffle already exists in the list
-            if (!raffleList.querySelector(`li[data-raffle-id="${raffle.id}"]`)) {
-                const listItem = document.createElement('li');
-                listItem.setAttribute("data-raffle-id", raffle.id);
-                let participants = raffle.participants.length > 0 ? raffle.participants.join(', ') : 'None';
-                listItem.innerHTML = `
-                    <h3>${raffle.name}</h3>
-                    <p>Start Date: ${new Date(raffle.startDate).toLocaleString()}</p>
-                    <p>End Date: ${new Date(raffle.endDate).toLocaleString()}</p>
-                    <p id='participants-paragraph' style="display: none;">Participants: ${participants}</p>
-                `;
-                raffleList.appendChild(listItem);
+    // Check if the raffle already exists in the list
+    if (!raffleList.querySelector(`li[data-raffle-id="${raffle.id}"]`)) {
+        const listItem = document.createElement('li');
+        listItem.setAttribute("data-raffle-id", raffle.id);
+        let participants = raffle.participants.length > 0 ? raffle.participants.join(', ') : 'None';
+        listItem.innerHTML = `
+            <h3>${raffle.name}</h3>
+            <p>Owner: Loading...</p>
+            <p>Start Date: ${new Date(raffle.startDate).toLocaleString()}</p>
+            <p>End Date: ${new Date(raffle.endDate).toLocaleString()}</p>
+            <p id='participants-paragraph' style="display: none;">Participants: ${participants}</p>
+        `;
+        raffleList.appendChild(listItem);
 
-                // Fetch user data
-                const userDataResponse = await fetch('/profile', {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                });
-
-                const userData = await userDataResponse.json();
-
-                // Check if a user is admin
-                if (userData && userData.user && userData.user.type == 'admin') {
-                    const participantsParagraph = listItem.querySelector('#participants-paragraph');
-                    if (participantsParagraph) {
-                        participantsParagraph.style.display = 'block';
-                    }
+        // Fetch owner's information if owner ID is available
+        if (raffle.owner) {
+            try {
+                const ownerDataResponse = await fetch(`/user/${raffle.owner}`);
+                if (!ownerDataResponse.ok) {
+                    throw new Error('Failed to fetch owner data');
                 }
+                const ownerData = await ownerDataResponse.json();
 
-                // Add event listener to the new list item
-                addEventListenerToRaffleItem(listItem);
+                if (ownerData && !ownerData.error) {
+                    // Update owner's name in the list item
+                    const ownerParagraph = listItem.querySelector('p:nth-child(2)');
+                    if (ownerParagraph) {
+                        ownerParagraph.textContent = `Owner: ${ownerData.name}`;
+                    }
+                } else {
+                    throw new Error('Owner data not found');
+                }
+            } catch (error) {
+                console.error('Error fetching owner data:', error);
+            }
+        } else {
+            console.error('Owner ID not available for raffle:', raffle.id);
+            oownerParagraph.textContent = "Can't find owner" ;
+        }
+
+        // Fetch user data
+        const userDataResponse = await fetch('/profile', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
             }
         });
+
+        const userData = await userDataResponse.json();
+
+        // Check if a user is admin
+        if (userData && userData.user && userData.user.type == 'admin') {
+            const participantsParagraph = listItem.querySelector('#participants-paragraph');
+            if (participantsParagraph) {
+                participantsParagraph.style.display = 'block';
+            }
+        }
+
+        // Add event listener to the new list item
+        addEventListenerToRaffleItem(listItem);
+    }
+});
+
+
     } catch (error) {
         console.error('Error fetching or processing raffles:', error);
     }
