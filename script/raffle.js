@@ -15,12 +15,20 @@ function fetchRaffleInfo(raffleId) {
             return response.json();
         })
         .then(data => {
+            // Parse and format start date
+            const startDate = new Date(data.startDate);
+            const formattedStartDate = formatDate(startDate);
+
+            // Parse and format end date
+            const endDate = new Date(data.endDate);
+            const formattedEndDate = formatDate(endDate);
+
             // Populate the page with the retrieved raffle information
             document.getElementById('raffle-name').innerText = data.name;
             document.getElementById('raffle-prize-header').innerText = data.prize;
             document.getElementById('raffle-prize').innerText = data.prize;
-            document.getElementById('raffle-start-date').innerText = data.startDate;
-            document.getElementById('raffle-end-date').innerText = data.endDate;
+            document.getElementById('raffle-start-date').innerText = formattedStartDate;
+            document.getElementById('raffle-end-date').innerText = formattedEndDate;
 
             document.title = data.name;
         })
@@ -29,15 +37,32 @@ function fetchRaffleInfo(raffleId) {
         });
 }
 
+// Function to format date as DD/MM/YYYY
+function formatDate(date) {
+    const day = date.getDate();
+    const month = date.getMonth() + 1;
+    const year = date.getFullYear();
+    const hours = date.getHours();
+    const minutes = date.getMinutes();
+
+    const formattedDay = day < 10 ? '0' + day : day;
+    const formattedMonth = month < 10 ? '0' + month : month;
+    const formattedYear = year < 10 ? '0' + year : year;
+    const formattedHours = hours < 10 ? '0' + hours : hours;
+    const formattedMinutes = minutes < 10 ? '0' + minutes : minutes;
+
+    return `${formattedDay}/${formattedMonth}/${formattedYear} ${formattedHours}:${formattedMinutes}`;
+}
+
 // Function to enter the raffle
 async function enterRaffle(raffleId, userId) {
     try {
         console.log("Attempt to enter raffle with raffleId:", raffleId, "and userId:", userId);
-        
+
         const requestBody = JSON.stringify({ raffleId: raffleId.toString(), userId });
-        
+
         console.log("Request body:", requestBody);
-        
+
         const response = await fetch("/enter-raffle", {
             method: 'POST',
             headers: {
@@ -63,11 +88,11 @@ async function enterRaffle(raffleId, userId) {
 async function leaveRaffle(raffleId, userId) {
     try {
         console.log("Attempt to leave raffle with raffleId:", raffleId, "and userId:", userId);
-        
+
         const requestBody = JSON.stringify({ raffleId: raffleId.toString(), userId });
-        
+
         console.log("Request body:", requestBody);
-        
+
         const response = await fetch("/leave-raffle", {
             method: 'POST',
             headers: {
@@ -102,27 +127,27 @@ document.addEventListener('DOMContentLoaded', () => {
             'Content-Type': 'application/json',
         },
     })
-    .then(response => response.json())
-    .then(data => {
-        if (data.user) {
-            const userId = data.user._id; // Get the user ID
-            
-            // Add event listener to enter raffle button
-            enterRaffleButton.addEventListener('click', () => {
-                // Call enterRaffle function with both raffle ID and user ID
-                enterRaffle(raffleId, userId);
-            });
+        .then(response => response.json())
+        .then(data => {
+            if (data.user) {
+                const userId = data.user._id; // Get the user ID
 
-            // Add event listener to leave raffle button
-            leaveRaffleButton.addEventListener('click', () => {
-                // Call leaveRaffle function with both raffle ID and user ID
-                leaveRaffle(raffleId, userId);
-            });
-        } else {
-            console.error('User information not found');
-        }
-    })
-    .catch(error => console.error('Error fetching user profile:', error));
+                // Add event listener to enter raffle button
+                enterRaffleButton.addEventListener('click', () => {
+                    // Call enterRaffle function with both raffle ID and user ID
+                    enterRaffle(raffleId, userId);
+                });
+
+                // Add event listener to leave raffle button
+                leaveRaffleButton.addEventListener('click', () => {
+                    // Call leaveRaffle function with both raffle ID and user ID
+                    leaveRaffle(raffleId, userId);
+                });
+            } else {
+                console.error('User information not found');
+            }
+        })
+        .catch(error => console.error('Error fetching user profile:', error));
 
     // Fetch raffle information when the DOM is loaded
     fetchRaffleInfo(raffleId);

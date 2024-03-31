@@ -7,7 +7,6 @@ const bcrypt = require('bcrypt');
 const session = require('express-session');
 const MongoStore = require('connect-mongo');
 const cron = require('node-cron');
-const createRaffle = require('./script/raffleCreator.js');
 
 const app = express();
 const port = 8080;
@@ -43,7 +42,8 @@ app.on('upgrade', (request, socket, head) => {
 });
 
 // MongoDB Connection
-const uri = "mongodb://127.0.0.1:27017";
+db = "production";
+const uri = "mongodb://127.0.0.1:27017/" + db;
 const client = new MongoClient(uri);
 
 // Configure session management
@@ -55,7 +55,7 @@ const mongoStoreInstance = new MongoStore({
 
 app.use(
   session({
-    secret: 'TODO',
+    secret: 'kittymittens',
     resave: false,
     saveUninitialized: false,
     store: mongoStoreInstance,
@@ -67,23 +67,8 @@ app.use(
 
 // Serve the index.html file
 app.get("/", async (req, res) => {
-  try {
-    await client.connect(); // Connect to MongoDB
-
-    const db = client.db(); // Get the default database
-    const collection = db.collection("temp_name");
-
-    // Perform MongoDB operations
-    const documents = await collection.find().toArray();
-
-    // Send the index.html file
-    res.sendFile(path.join(__dirname, "html", "index.html"));
-  } catch (error) {
-    console.error("Error connecting to MongoDB:", error);
-  } finally {
-    // Close the MongoDB connection when done
-    await client.close();
-  }
+  // Send the index.html file
+  res.sendFile(path.join(__dirname, "html", "index.html"));
 });
 
 // Signup route
@@ -361,8 +346,14 @@ app.post("/create-raffle", async (req, res) => {
     const db = client.db(); // Get the default database
     const collection = db.collection("raffles");
 
+    const raffleCount = await collection.countDocuments();
+
+    // Calculate the new raffle ID
+    const raffleId = raffleCount + 1;
+
     // Create the new raffle object
     const newRaffle = {
+      id: raffleId,
       name,
       startDate,
       endDate,
@@ -380,11 +371,11 @@ app.post("/create-raffle", async (req, res) => {
     const userCollection = db.collection("users");
     await userCollection.updateOne(
       { _id: userId },
-      { $push: { raffles: newRaffle._id } }
+      { $push: { raffles: newRaffle.id } }
     );
 
-    console.log(`Raffle created with name: ${name}`);
-    
+    console.log(`Raffle created with ID: ${raffleId}`);
+
     // Send a success response
     res.status(201).json({ message: "Raffle created successfully", raffle: newRaffle });
   } catch (error) {
