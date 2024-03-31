@@ -13,6 +13,10 @@ main {
   color: #daa520;
 }
 
+#active-raffles-list {
+    list-style-type: none;
+}
+
 .raffle-list {
   flex: 1;
   overflow-y: auto;

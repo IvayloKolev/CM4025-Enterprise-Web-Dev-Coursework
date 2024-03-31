@@ -28,12 +28,9 @@ main {
     transform: translateX(-50%);
 }
 
-#leave-raffle-section {
+#leave-raffle-button {
     margin-top: 20px;
     text-align: center;
-}
-
-#leave-raffle-button {
     font-size: 1em;
     padding: 10px 20px;
 }
