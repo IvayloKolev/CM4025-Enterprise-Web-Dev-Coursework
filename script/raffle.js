@@ -1,3 +1,5 @@
+import { checkSession, formatDate } from './utils.js';
+
 // Function to parse query parameters from URL
 function getQueryParam(param) {
     const queryString = window.location.search;
@@ -37,31 +39,98 @@ function fetchRaffleInfo(raffleId) {
         });
 }
 
-// Function to format date as DD/MM/YYYY
-function formatDate(date) {
-    const day = date.getDate();
-    const month = date.getMonth() + 1;
-    const year = date.getFullYear();
-    const hours = date.getHours();
-    const minutes = date.getMinutes();
+document.addEventListener('DOMContentLoaded', () => {
+    const enterRaffleButton = document.getElementById('enter-raffle-button');
+    const leaveRaffleButton = document.getElementById('leave-raffle-button');
+    const raffleId = parseInt(getQueryParam('id'));
 
-    const formattedDay = day < 10 ? '0' + day : day;
-    const formattedMonth = month < 10 ? '0' + month : month;
-    const formattedYear = year < 10 ? '0' + year : year;
-    const formattedHours = hours < 10 ? '0' + hours : hours;
-    const formattedMinutes = minutes < 10 ? '0' + minutes : minutes;
+    // Add event listener to enter raffle button
+    enterRaffleButton.addEventListener('click', async () => {
+        try {
+            const sessionExists = await checkSession();
 
-    return `${formattedDay}/${formattedMonth}/${formattedYear} ${formattedHours}:${formattedMinutes}`;
+            if (!sessionExists) {
+                // Session doesn't exist, show confirmation dialog
+                showConfirmationDialog();
+                return; // Exit the function
+            }
+
+            // User is logged in, proceed with entering the raffle
+            const userId = await getUserId();
+            enterRaffle(raffleId, userId);
+        } catch (error) {
+            console.error('Error checking session:', error);
+            alert('An error occurred. Please try again later.');
+        }
+    });
+
+    // Add event listener to leave raffle button
+    leaveRaffleButton.addEventListener('click', async () => {
+        try {
+            const sessionExists = await checkSession();
+
+            if (sessionExists) {
+                // Session exists, proceed with leaving the raffle
+                const userId = await getUserId();
+                leaveRaffle(raffleId, userId);
+            } else {
+                // Session doesn't exist, prompt the user to log in
+                showConfirmationDialog();
+            }
+        } catch (error) {
+            console.error('Error checking session:', error);
+            alert('An error occurred. Please try again later.');
+        }
+    });
+
+    fetchRaffleInfo(raffleId);
+});
+
+// Function to show confirmation dialog
+async function showConfirmationDialog() {
+    try {
+        const sessionExists = await checkSession();
+
+        if (!sessionExists) {
+            // Session doesn't exist, user is not logged in
+            const confirmation = confirm('You are not logged in. Do you want to continue as a guest?');
+            if (confirmation) {
+                continueAsGuest();
+            } else {
+                window.location.href = '/html/login.html'; // Redirect to login page
+            }
+        }
+    } catch (error) {
+        console.error('Error checking session:', error);
+        alert('An error occurred. Please try again later.');
+    }
+}
+
+// Function to continue as guest
+async function continueAsGuest() {
+    try {
+        const response = await fetch("/continue-as-guest", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (response.ok) {
+            alert('You have successfully entered the raffle as a guest!');
+        } else {
+            alert('Failed to continue as a guest. Please try again later.');
+        }
+    } catch (error) {
+        console.error('Error continuing as guest:', error);
+        alert('An error occurred while continuing as a guest. Please try again later.');
+    }
 }
 
 // Function to enter the raffle
 async function enterRaffle(raffleId, userId) {
     try {
-        console.log("Attempt to enter raffle with raffleId:", raffleId, "and userId:", userId);
-
         const requestBody = JSON.stringify({ raffleId: raffleId.toString(), userId });
-
-        console.log("Request body:", requestBody);
 
         const response = await fetch("/enter-raffle", {
             method: 'POST',
@@ -70,8 +139,6 @@ async function enterRaffle(raffleId, userId) {
             },
             body: requestBody
         });
-
-        console.log("Enter raffle response received:", response);
 
         if (response.ok) {
             alert('You have successfully entered the raffle!');
@@ -87,11 +154,7 @@ async function enterRaffle(raffleId, userId) {
 // Function to leave the raffle
 async function leaveRaffle(raffleId, userId) {
     try {
-        console.log("Attempt to leave raffle with raffleId:", raffleId, "and userId:", userId);
-
         const requestBody = JSON.stringify({ raffleId: raffleId.toString(), userId });
-
-        console.log("Request body:", requestBody);
 
         const response = await fetch("/leave-raffle", {
             method: 'POST',
@@ -100,8 +163,6 @@ async function leaveRaffle(raffleId, userId) {
             },
             body: requestBody
         });
-
-        console.log("Leave raffle response received:", response);
 
         if (response.ok) {
             alert('You have successfully left the raffle!');
@@ -113,42 +174,3 @@ async function leaveRaffle(raffleId, userId) {
         alert('An error occurred while leaving the raffle. Please try again later.');
     }
 }
-
-document.addEventListener('DOMContentLoaded', () => {
-    const enterRaffleButton = document.getElementById('enter-raffle-button');
-    const leaveRaffleButton = document.getElementById('leave-raffle-button'); // New button
-    const raffleId = parseInt(getQueryParam('id'));
-
-    // Fetch user information when the DOM is loaded
-    fetch('/profile', {
-        method: 'GET',
-        credentials: 'include', // Include cookies in the request
-        headers: {
-            'Content-Type': 'application/json',
-        },
-    })
-        .then(response => response.json())
-        .then(data => {
-            if (data.user) {
-                const userId = data.user._id; // Get the user ID
-
-                // Add event listener to enter raffle button
-                enterRaffleButton.addEventListener('click', () => {
-                    // Call enterRaffle function with both raffle ID and user ID
-                    enterRaffle(raffleId, userId);
-                });
-
-                // Add event listener to leave raffle button
-                leaveRaffleButton.addEventListener('click', () => {
-                    // Call leaveRaffle function with both raffle ID and user ID
-                    leaveRaffle(raffleId, userId);
-                });
-            } else {
-                console.error('User information not found');
-            }
-        })
-        .catch(error => console.error('Error fetching user profile:', error));
-
-    // Fetch raffle information when the DOM is loaded
-    fetchRaffleInfo(raffleId);
-});

@@ -1,3 +1,5 @@
+import { checkSession, getUserId } from './utils.js';
+
 document.addEventListener("DOMContentLoaded", function () {
     const createRaffleForm = document.getElementById("create-raffle-form");
 
@@ -11,25 +13,19 @@ document.addEventListener("DOMContentLoaded", function () {
             const prize = document.getElementById("prize").value;
 
             try {
-                fetch('/profile', {
-                    method: 'GET',
-                    credentials: 'include', // Include cookies in the request
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.user) {
-                            const userId = data.user._id;
-                            // Send data to the server
-                            sendDataToServer(name, startDate, endDate, prize, userId);
-                        } else {
-                            console.error("User data not found.");
-                        }
-                    });
+                const isAuthenticated = await checkSession();
+
+                if (isAuthenticated) {
+                    const userId = await getUserId();
+                    // Send data to the server
+                    sendDataToServer(name, startDate, endDate, prize, userId);
+                } else {
+                    console.error("User is not authenticated.");
+                    // Handle case where user is not authenticated
+                }
             } catch (error) {
-                console.error("Error getting user data:", error);
+                console.error("Error creating raffle:", error);
+                // Handle error - display error message to the user
             }
         });
     } else {

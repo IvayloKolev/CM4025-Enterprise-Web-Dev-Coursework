@@ -227,6 +227,19 @@ app.get("/profile", (req, res) => {
   }
 });
 
+// Check session route
+app.get("/check-session", (req, res) => {
+  console.log("Check Session Route");
+  // Check if the user is logged in
+  if (req.session.user) {
+      // Session exists
+      res.status(200).send('Session exists');
+  } else {
+      // No session exists
+      res.status(404).send('No session exists');
+  }
+});
+
 // User info by id route
 app.get("/user/:id", async (req, res) => {
   try {
@@ -257,6 +270,50 @@ app.get("/user/:id", async (req, res) => {
   }
 });
 
+// Create a new route for continuing as a guest
+app.post("/continue-as-guest", async (req, res) => {
+  try {
+    // Generate a new unique ID for the guest user
+    const guestUserId = uuidv4();
+
+    // Set the user type to 'guest'
+    const userType = 'guest';
+
+    // Connect to MongoDB
+    await client.connect();
+    const db = client.db(); // Get the default database
+    const collection = db.collection("users");
+
+    // Insert the temporary guest user into the database
+    await collection.insertOne({
+      _id: guestUserId,
+      type: userType,
+      email: null,
+      username: "guest",
+      raffles: null,
+      prizes: []
+    });
+
+    // Create a new session for the guest user
+    req.session.user = {
+      _id: guestUserId,
+      type: userType,
+      email: null,
+      username: "guest",
+      raffles: null,
+      prizes: []
+    };
+
+    // Send a success response
+    res.status(200).send("Guest user created successfully");
+  } catch (error) {
+    console.error("Error creating guest user:", error);
+    res.status(500).send("Internal Server Error");
+  } finally {
+    // Close the MongoDB connection when done
+    await client.close();
+  }
+});
 
 // Enter Raffle route
 app.post("/enter-raffle", async (req, res) => {
@@ -359,6 +416,7 @@ app.post("/create-raffle", async (req, res) => {
       endDate,
       ended: false,
       prize,
+      prizeClaimed: false,
       participants: [],
       winner: null,
       owner: userId
@@ -490,7 +548,7 @@ async function selectWinner(raffleId) {
       console.log("Raffle " + raffleId + " has ended with no participants. No winner is drawn");
       await raffles.updateOne(
         { id: parseInt(raffleId) },
-        { $set: { ended: true } }
+        { $set: { ended: true, winner: null } }
       );
       return;
     }
@@ -499,20 +557,30 @@ async function selectWinner(raffleId) {
     const winnerIndex = Math.floor(Math.random() * raffle.participants.length);
     const winnerId = raffle.participants[winnerIndex];
 
-    // Update the raffle object with the winner's information
+    // Get the user's entry to check their type
+    const winnerUser = await users.findOne({ _id: winnerId });
+
+    if (!winnerUser) {
+      console.error("Winner user not found");
+      return;
+    }
+
+    // Update the raffle object with the winner's information and prizeClaimed
     await raffles.updateOne(
       { id: parseInt(raffleId) },
-      { $set: { winner: winnerId, ended: true } }
+      { $set: { winner: winnerId, ended: true, prizeClaimed: winnerUser.type !== 'guest' } }
     );
 
     // Get the prize string
     const prize = raffle.prize;
 
-    // Add the prize string to the user's prizes array
-    await users.updateOne(
-      { _id: winnerId },
-      { $push: { prizes: prize } }
-    );
+    if (winnerUser.type !== 'guest') {
+      // Add the prize string to the user's prizes array
+      await users.updateOne(
+        { _id: winnerId },
+        { $push: { prizes: prize } }
+      );
+    }
 
     console.log(`Winner selected for raffle ${raffleId}: ${winnerId}`);
   } catch (error) {
