@@ -1,4 +1,4 @@
-import { checkSession, formatDate } from './utils.js';
+import { checkSession, formatDate, getUserId } from './utils.js';
 
 // Function to parse query parameters from URL
 function getQueryParam(param) {

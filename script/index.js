@@ -29,13 +29,11 @@ async function fetchRafflesAndUpdateList() {
             if (!raffleList.querySelector(`li[data-raffle-id="${raffle.id}"]`)) {
                 const listItem = document.createElement('li');
                 listItem.setAttribute("data-raffle-id", raffle.id);
-                let participants = raffle.participants.length > 0 ? raffle.participants.join(', ') : 'None';
                 listItem.innerHTML = `
                     <h3>${raffle.name}</h3>
                     <p>Owner: Loading...</p>
                     <p>Start Date: ${formatDate(new Date(raffle.startDate))}</p>
                     <p>End Date: ${formatDate(new Date(raffle.endDate))}</p>
-                    <p id='participants-paragraph' style="display: none;">Participants: ${participants}</p>
                 `;
                 raffleList.appendChild(listItem);
 
@@ -67,14 +65,6 @@ async function fetchRafflesAndUpdateList() {
 
                 // Add event listener to the new list item
                 addEventListenerToRaffleItem(listItem);
-
-                // Check if a user is admin
-                if (checkAdmin()) {
-                    const participantsParagraph = listItem.querySelector('#participants-paragraph');
-                    if (participantsParagraph) {
-                        participantsParagraph.style.display = 'block';
-                    }
-                }
             }
         });
     } catch (error) {

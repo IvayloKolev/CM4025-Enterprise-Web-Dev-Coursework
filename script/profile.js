@@ -46,8 +46,14 @@ document.addEventListener('DOMContentLoaded', async () => {
             if (activeRafflesIn.length > 0) {
                 activeRafflesIn.forEach(raffle => {
                     const listItem = document.createElement('li');
-                    listItem.textContent = raffle.name;
+                    listItem.setAttribute("data-raffle-id", raffle.id);
+                    listItem.innerHTML = `
+                    <h3>${raffle.name}</h3>
+                    <p>Prize: ${raffle.prize}</p>
+                    <p>End Date: ${formatDate(new Date(raffle.endDate))}</p>
+                `;
                     activeRafflesInList.appendChild(listItem);
+                    addEventListenerToRaffleItem(listItem);
                 });
             } else {
                 const listItem = document.createElement('li');
@@ -55,13 +61,19 @@ document.addEventListener('DOMContentLoaded', async () => {
                 activeRafflesInList.appendChild(listItem);
             }
 
-            // Display active raffles the user owns
+            // Display raffles the user owns
             const ownedRaffles = allRaffles.filter(raffle => raffle.owner === userData._id);
             if (ownedRaffles.length > 0) {
                 ownedRaffles.forEach(raffle => {
                     const listItem = document.createElement('li');
-                    listItem.textContent = raffle.name;
+                    listItem.setAttribute("data-raffle-id", raffle.id);
+                    listItem.innerHTML = `
+                    <h3>${raffle.name}</h3>
+                    <p>Prize: ${raffle.prize}</p>
+                    <p>End Date: ${formatDate(new Date(raffle.endDate))}</p>
+                `;
                     activeRafflesOwnList.appendChild(listItem);
+                    addEventListenerToRaffleItem(listItem);
                 });
             } else {
                 const listItem = document.createElement('li');

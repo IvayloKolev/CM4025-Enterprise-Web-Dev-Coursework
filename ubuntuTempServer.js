@@ -232,11 +232,11 @@ app.get("/check-session", (req, res) => {
   console.log("Check Session Route");
   // Check if the user is logged in
   if (req.session.user) {
-      // Session exists
-      res.status(200).send('Session exists');
+    // Session exists
+    res.status(200).send('Session exists');
   } else {
-      // No session exists
-      res.status(404).send('No session exists');
+    // No session exists
+    res.status(404).send('No session exists');
   }
 });
 
@@ -270,13 +270,11 @@ app.get("/user/:id", async (req, res) => {
   }
 });
 
-// Create a new route for continuing as a guest
+// Continue as Guest route
 app.post("/continue-as-guest", async (req, res) => {
   try {
-    // Generate a new unique ID for the guest user
     const guestUserId = uuidv4();
 
-    // Set the user type to 'guest'
     const userType = 'guest';
 
     // Connect to MongoDB
@@ -284,7 +282,6 @@ app.post("/continue-as-guest", async (req, res) => {
     const db = client.db(); // Get the default database
     const collection = db.collection("users");
 
-    // Insert the temporary guest user into the database
     await collection.insertOne({
       _id: guestUserId,
       type: userType,
@@ -294,7 +291,6 @@ app.post("/continue-as-guest", async (req, res) => {
       prizes: []
     });
 
-    // Create a new session for the guest user
     req.session.user = {
       _id: guestUserId,
       type: userType,
@@ -304,13 +300,11 @@ app.post("/continue-as-guest", async (req, res) => {
       prizes: []
     };
 
-    // Send a success response
     res.status(200).send("Guest user created successfully");
   } catch (error) {
     console.error("Error creating guest user:", error);
     res.status(500).send("Internal Server Error");
   } finally {
-    // Close the MongoDB connection when done
     await client.close();
   }
 });
@@ -574,13 +568,10 @@ async function selectWinner(raffleId) {
     // Get the prize string
     const prize = raffle.prize;
 
-    if (winnerUser.type !== 'guest') {
-      // Add the prize string to the user's prizes array
-      await users.updateOne(
-        { _id: winnerId },
-        { $push: { prizes: prize } }
-      );
-    }
+    await users.updateOne(
+      { _id: winnerId },
+      { $push: { prizes: prize } }
+    );
 
     console.log(`Winner selected for raffle ${raffleId}: ${winnerId}`);
   } catch (error) {

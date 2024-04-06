@@ -1,12 +1,11 @@
 main {
     display: flex;
     justify-content: space-between;
-    margin: 20px;
 }
 
 .left-column,
 .right-column {
-    width: calc(50% - 10px); /* Adjust width as needed */
+    width: calc(50% - 10px);
 }
 
 #user-info {
@@ -33,6 +32,32 @@ main {
     margin-bottom: 0;
 }
 
+.right-column {
+    width: calc(50% - 10px);
+    overflow-y: auto;
+    max-height: calc(100vh - 200px);
+    padding-right: 10px;
+}
+
+.right-column::-webkit-scrollbar {
+    width: 10px;
+}
+
+.right-column::-webkit-scrollbar-track {
+    background: #04010a;
+    padding-right: 10px;
+    border-radius: 5px;
+}
+
+.right-column::-webkit-scrollbar-thumb {
+    background: #daa520;
+    border-radius: 5px;
+}
+
+.right-column::-webkit-scrollbar-thumb:hover {
+    background: #ffd700;
+}
+
 #active-raffles-sections {
     display: flex;
     flex-direction: column;
@@ -52,12 +77,18 @@ main {
 }
 
 .active-raffles-column ul li {
+    padding: 15px;
+    margin: 10px;
     background-color: #04010a;
-    padding: 10px;
-    border-radius: 5px;
-    margin-bottom: 10px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s ease;
 }
 
+.active-raffles-column ul li:hover {
+    background-color: #090960;
+    cursor: pointer;
+}
 .active-raffles-column ul li:last-child {
     margin-bottom: 0;
 }

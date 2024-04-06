@@ -14,7 +14,7 @@ main {
 }
 
 #active-raffles-list {
-    list-style-type: none;
+  list-style-type: none;
 }
 
 .raffle-list {
@@ -25,7 +25,7 @@ main {
 
 .raffle-list li {
   padding: 15px;
-  margin-bottom: 10px;
+  margin: 10px;
   background-color: #04010a;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -37,3 +37,20 @@ main {
   cursor: pointer;
 }
 
+.raffle-list::-webkit-scrollbar {
+  width: 10px;
+}
+
+.raffle-list::-webkit-scrollbar-track {
+  background: #04010a;
+  border-radius: 5px;
+}
+
+.raffle-list::-webkit-scrollbar-thumb {
+  background: #daa520;
+  border-radius: 5px;
+}
+
+.raffle-list::-webkit-scrollbar-thumb:hover {
+  background: #ffd700;
+}
