@@ -130,3 +130,11 @@ export function formatDate(date) {
 
     return `${formattedDay}/${formattedMonth}/${formattedYear} ${formattedHours}:${formattedMinutes}`;
 }
+
+// Function to sanitize text input using regular expressions
+export function sanitizeInput(input) {
+    const pattern = /<[^>]*>?|[^a-zA-Z0-9\s\-,.]/g;
+    const sanitizedInput = input.replace(pattern, '');
+
+    return sanitizedInput;
+}

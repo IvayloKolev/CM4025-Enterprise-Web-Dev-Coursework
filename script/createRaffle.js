@@ -1,23 +1,23 @@
-import { checkSession, getUserId } from './utils.js';
+import { checkSession, getUserId, sanitizeInput } from './utils.js';
 
 document.addEventListener("DOMContentLoaded", function () {
     const createRaffleForm = document.getElementById("create-raffle-form");
 
-    if (createRaffleForm) { // Check if the form element exists
+    if (createRaffleForm) {
         createRaffleForm.addEventListener("submit", async function (event) {
             event.preventDefault();
 
-            const name = document.getElementById("name").value;
-            const startDate = document.getElementById("startDate").value;
-            const endDate = document.getElementById("endDate").value;
-            const prize = document.getElementById("prize").value;
+            const name = sanitizeInput(document.getElementById("name").value);
+            const startDate = sanitizeInput(document.getElementById("startDate").value);
+            const endDate = sanitizeInput(document.getElementById("endDate").value);
+            const prize = sanitizeInput(document.getElementById("prize").value);
 
             try {
                 const isAuthenticated = await checkSession();
 
                 if (isAuthenticated) {
                     const userId = await getUserId();
-                    // Send data to the server
+                    // Send sanitized data to the server
                     sendDataToServer(name, startDate, endDate, prize, userId);
                 } else {
                     console.error("User is not authenticated.");
