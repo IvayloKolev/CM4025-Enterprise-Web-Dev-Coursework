@@ -114,6 +114,7 @@ export function addEventListenerToRaffleItem(item) {
     });
 }
 
+// Function to format date as DD/MM/YYYY
 export function formatDate(dateString) {
     try {
         const date = new Date(dateString);
