@@ -1,4 +1,4 @@
-import { checkAdmin, formatDate, addEventListenerToRaffleItem } from './utils.js';
+import { formatDate, addEventListenerToRaffleItem, checkSession } from './utils.js';
 
 async function fetchRafflesAndUpdateList() {
     try {
@@ -77,3 +77,21 @@ fetchRafflesAndUpdateList();
 
 // Schedule periodic updates every thirty seconds
 setInterval(fetchRafflesAndUpdateList, 30000); // 30 seconds
+
+document.addEventListener('DOMContentLoaded', async () => {
+    const isLoggedIn = await checkSession();
+
+    // Remove the create raffle button if the user is not logged in
+    if (!isLoggedIn) {
+        const createRaffleButton = document.getElementById('create-raffle-btn');
+        if (createRaffleButton) {
+            createRaffleButton.style.display = 'none';
+        }
+    } else {
+        // Remove the welcome div if the user is logged in
+        const welcomeDiv = document.querySelector('.welcome');
+        if (welcomeDiv) {
+            welcomeDiv.style.display = 'none';
+        }
+    }
+});

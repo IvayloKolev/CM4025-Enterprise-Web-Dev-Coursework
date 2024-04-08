@@ -7,6 +7,7 @@ const bcrypt = require('bcrypt');
 const session = require('express-session');
 const MongoStore = require('connect-mongo');
 const cron = require('node-cron');
+const WebSocket = require('ws');
 
 const app = express();
 const port = 8080;
@@ -14,35 +15,12 @@ const port = 8080;
 // Serve static files from the 'public' directory
 app.use(express.static(path.join(__dirname)));
 
-// Use body-parser middleware
+// Middleware
+app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// Use Json
-app.use(express.json());
-
-// Configuring Web Socket Server for real time updates
-const WebSocket = require('ws');
-const webSocketServer = new WebSocket.Server({ server: app });
-
-webSocketServer.on('connection', function connection(ws) {
-  console.log('Client connected to ws Server');
-
-  ws.on('message', function incoming(message) {
-    console.log('received: %s', message);
-  });
-
-  ws.send('Client connected to ws Server');
-});
-
-// Attach WebSocket upgrade event to Express app
-app.on('upgrade', (request, socket, head) => {
-  webSocketServer.handleUpgrade(request, socket, head, (ws) => {
-    webSocketServer.emit('connection', ws, request);
-  });
-});
-
 // MongoDB Connection
-db = "production";
+const db = "production";
 const uri = "mongodb://127.0.0.1:27017/" + db;
 const client = new MongoClient(uri);
 
@@ -53,21 +31,18 @@ const mongoStoreInstance = new MongoStore({
   ttl: 60 * 60 * 24, // 24h
 });
 
-app.use(
-  session({
-    secret: 'kittymittens',
-    resave: false,
-    saveUninitialized: false,
-    store: mongoStoreInstance,
-    cookie: {
-      maxAge: 1000 * 60 * 60 * 24, // 24h
-    },
-  })
-);
+app.use(session({
+  secret: 'kittymittens',
+  resave: false,
+  saveUninitialized: false,
+  store: mongoStoreInstance,
+  cookie: { maxAge: 1000 * 60 * 60 * 24 } // 24h
+}));
+
+// Routes
 
 // Serve the index.html file
 app.get("/", async (req, res) => {
-  // Send the index.html file
   res.sendFile(path.join(__dirname, "html", "index.html"));
 });
 

@@ -114,19 +114,24 @@ export function addEventListenerToRaffleItem(item) {
     });
 }
 
-// Function to format date as DD/MM/YYYY
-export function formatDate(date) {
-    const day = date.getDate();
-    const month = date.getMonth() + 1;
-    const year = date.getFullYear();
-    const hours = date.getHours();
-    const minutes = date.getMinutes();
+export function formatDate(dateString) {
+    try {
+        const date = new Date(dateString);
+        const day = date.getDate();
+        const month = date.getMonth() + 1;
+        const year = date.getFullYear();
+        const hours = date.getHours();
+        const minutes = date.getMinutes();
 
-    const formattedDay = day < 10 ? '0' + day : day;
-    const formattedMonth = month < 10 ? '0' + month : month;
-    const formattedYear = year < 10 ? '0' + year : year;
-    const formattedHours = hours < 10 ? '0' + hours : hours;
-    const formattedMinutes = minutes < 10 ? '0' + minutes : minutes;
+        const formattedDay = day < 10 ? '0' + day : day;
+        const formattedMonth = month < 10 ? '0' + month : month;
+        const formattedYear = year;
+        const formattedHours = hours < 10 ? '0' + hours : hours;
+        const formattedMinutes = minutes < 10 ? '0' + minutes : minutes;
 
-    return `${formattedDay}/${formattedMonth}/${formattedYear} ${formattedHours}:${formattedMinutes}`;
+        return `${formattedDay}/${formattedMonth}/${formattedYear} ${formattedHours}:${formattedMinutes}`;
+    } catch (error) {
+        console.error('Error formatting date:', error);
+        return 'Invalid Date';
+    }
 }
