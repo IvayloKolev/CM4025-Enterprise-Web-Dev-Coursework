@@ -2,10 +2,27 @@
 
 ## Description
 
-Welcome to IRS - The International Raffle Station, where adventure awaits! Engage in thrilling raffle experiences, create your own draws, and stand a chance to win exciting prizes.
+Welcome to IRS - The International Raffle Station, where adventure awaits!
 
 ## Installation
 
-The backend server runs on an Ubuntu VM and reqires MongoDB.
+To set up IRS on your system, follow these steps:
 
-```bash
+1. Download the setup.sh script from the repository.
+
+2. Run the setup.sh script:
+   
+   ```bash
+   ./setup.sh
+
+3. When the setup is complete, connect to the MongoDB instance:
+
+    ```bash
+    mongosh --host 127.0.0.1:27017
+
+4. In a new terminal window, start the server:
+
+    ```bash
+    noder server.js
+
+Now the IRS is up and running and ready to use!
