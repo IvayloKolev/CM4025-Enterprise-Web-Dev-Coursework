@@ -34,4 +34,11 @@ git clone https://github.com/IvayloKolev/CM4025-Enterprise-Web-Dev-Coursework.gi
 echo "Starting the MongoDB server..."
 mongod --dbpath CM4025-Enterprise-Web-Dev-Coursework/database
 
-echo "Setup completed successfully."
+# Run npm install to install dependencies
+echo "Installing dependencies..."
+cd CM4025-Enterprise-Web-Dev-Coursework
+npm install
+
+# Start the MongoDB Server
+echo "Starting the MongoDB Server..."
+mongod --dbpath database
