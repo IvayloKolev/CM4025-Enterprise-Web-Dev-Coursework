@@ -496,6 +496,45 @@ cron.schedule('* * * * *', async () => {
   }
 });
 
+// End Raffle route
+app.post("/end-raffle", async (req, res) => {
+  console.log("End Raffle Route");
+  const { raffleId } = req.body;
+
+  try {
+    // Connect to MongoDB
+    await client.connect();
+    const db = client.db();
+    const collection = db.collection("raffles");
+
+    // Find the raffle with the specified ID
+    const raffle = await collection.findOne({ id: parseInt(raffleId) });
+
+    if (!raffle) {
+      // If raffle not found, return 404 error
+      return res.status(404).json({ error: "Raffle not found" });
+    }
+
+    // Check if the raffle has already ended
+    if (raffle.ended) {
+      // If raffle has already ended, return error
+      return res.status(400).json({ error: "Raffle has already ended" });
+    }
+
+    // End the raffle immediately
+    await selectWinner(raffleId);
+
+    // Send a success response
+    res.status(200).json({ message: "Raffle ended successfully" });
+  } catch (error) {
+    console.error("Error ending raffle:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  } finally {
+    // Close the MongoDB connection when done
+    await client.close();
+  }
+});
+
 // Select a Winner function
 async function selectWinner(raffleId) {
   try {
@@ -525,7 +564,7 @@ async function selectWinner(raffleId) {
     const winnerIndex = Math.floor(Math.random() * raffle.participants.length);
     const winnerId = raffle.participants[winnerIndex];
 
-    // Get the user's entry to check their type
+    // Get the user's entry to check their type and username
     const winnerUser = await users.findOne({ _id: winnerId });
 
     if (!winnerUser) {
@@ -536,7 +575,7 @@ async function selectWinner(raffleId) {
     // Update the raffle object with the winner's information and prizeClaimed
     await raffles.updateOne(
       { id: parseInt(raffleId) },
-      { $set: { winner: winnerId, ended: true, prizeClaimed: winnerUser.type !== 'guest' } }
+      { $set: { winner: winnerUser.username, ended: true, prizeClaimed: winnerUser.type !== 'guest' } }
     );
 
     // Get the prize string
@@ -547,7 +586,7 @@ async function selectWinner(raffleId) {
       { $push: { prizes: prize } }
     );
 
-    console.log(`Winner selected for raffle ${raffleId}: ${winnerId}`);
+    console.log(`Winner selected for raffle ${raffleId}: ${winnerUser.username}`);
   } catch (error) {
     console.error("Error selecting winner:", error);
   } finally {

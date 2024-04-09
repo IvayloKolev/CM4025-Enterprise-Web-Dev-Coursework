@@ -68,10 +68,11 @@ document.addEventListener('DOMContentLoaded', async () => {
                     const listItem = document.createElement('li');
                     listItem.setAttribute("data-raffle-id", raffle.id);
                     listItem.innerHTML = `
-                    <h3>${raffle.name}</h3>
-                    <p>Prize: ${raffle.prize}</p>
-                    <p>End Date: ${formatDate(new Date(raffle.endDate))}</p>
-                `;
+        <h3>${raffle.name}</h3>
+        <p>Prize: ${raffle.prize}</p>
+        <p>End Date: ${formatDate(new Date(raffle.endDate))}</p>
+        <button class="end-raffle-btn action-button" data-raffle-id="${raffle.id}">End Now</button>
+    `;
                     activeRafflesOwnList.appendChild(listItem);
                     addEventListenerToRaffleItem(listItem);
                 });
@@ -80,6 +81,37 @@ document.addEventListener('DOMContentLoaded', async () => {
                 listItem.textContent = 'None';
                 activeRafflesOwnList.appendChild(listItem);
             }
+
+            // Add event listener for "End now" buttons
+            const endRaffleButtons = document.querySelectorAll('.end-raffle-btn');
+            endRaffleButtons.forEach(button => {
+                button.addEventListener('click', async (event) => {
+                    // Prevent the click event from propagating to the list item
+                    event.stopPropagation();
+
+                    const raffleId = event.target.getAttribute('data-raffle-id');
+                    try {
+                        // Send a request to end the raffle
+                        const response = await fetch('/end-raffle', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({ raffleId }),
+                        });
+                        if (response.ok) {
+                            // Raffle ended successfully
+                            console.log(`Raffle ${raffleId} ended successfully`);
+                            // Refresh the page or perform any necessary actions
+                        } else {
+                            // Raffle could not be ended
+                            console.error(`Error ending raffle ${raffleId}: ${response.statusText}`);
+                        }
+                    } catch (error) {
+                        console.error(`Error ending raffle ${raffleId}: ${error}`);
+                    }
+                });
+            });
         } else {
             console.log('No user data found');
         }

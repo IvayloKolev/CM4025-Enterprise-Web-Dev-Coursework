@@ -1,4 +1,4 @@
-import { checkSession, getUserId, sanitizeInput } from './utils.js';
+import { checkSession, getUserId} from './utils.js';
 
 document.addEventListener("DOMContentLoaded", function () {
     const createRaffleForm = document.getElementById("create-raffle-form");
@@ -7,10 +7,10 @@ document.addEventListener("DOMContentLoaded", function () {
         createRaffleForm.addEventListener("submit", async function (event) {
             event.preventDefault();
 
-            const name = sanitizeInput(document.getElementById("name").value);
-            const startDate = sanitizeInput(document.getElementById("startDate").value);
-            const endDate = sanitizeInput(document.getElementById("endDate").value);
-            const prize = sanitizeInput(document.getElementById("prize").value);
+            const name = document.getElementById("name").value;
+            const startDate = document.getElementById("startDate").value;
+            const endDate = document.getElementById("endDate").value;
+            const prize = document.getElementById("prize").value;
 
             try {
                 const isAuthenticated = await checkSession();
@@ -56,11 +56,21 @@ async function sendDataToServer(name, startDate, endDate, prize, userId) {
 
         const responseData = await response.json();
         console.log(responseData); // Log the response from the server
-        // Redirect to home page or show success message
-        window.location.href = '/html/index.html';
+        
+        // Check if the raffle was created successfully
+        if (responseData && responseData.message === "Raffle created successfully") {
+            // Display success message
+            alert("Raffle created successfully");
+            
+            // Redirect to home page if raffle creation was successful
+            window.location.href = '/html/index.html';
+        } else {
+            // Display error message if raffle creation failed
+            throw new Error("Failed to create raffle");
+        }
     } catch (error) {
         console.error("Error creating raffle:", error);
-        alert("Error creating raffle:", error);
         // Handle error - display error message to the user
+        alert("Error creating raffle:", error);
     }
 }
