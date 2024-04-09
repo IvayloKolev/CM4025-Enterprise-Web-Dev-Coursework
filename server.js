@@ -7,7 +7,6 @@ const bcrypt = require('bcrypt');
 const session = require('express-session');
 const MongoStore = require('connect-mongo');
 const cron = require('node-cron');
-const WebSocket = require('ws');
 
 const app = express();
 const port = 8080;

@@ -1,18 +1,11 @@
-# RaffleMania - Your Source for Exciting Raffles and Lotteries
+# IRS - The International Raffle Station
 
 ## Description
 
-Imagine there is a description here
-
-## Table of Contents
-
-- [Installation](#installation)
-- [Usage](#usage)
-- [Contributing](#contributing)
-- [License](#license)
+Welcome to IRS - The International Raffle Station, where adventure awaits! Engage in thrilling raffle experiences, create your own draws, and stand a chance to win exciting prizes.
 
 ## Installation
 
-Imagine there is a description here
+The backend server runs on an Ubuntu VM and reqires MongoDB.
 
 ```bash
